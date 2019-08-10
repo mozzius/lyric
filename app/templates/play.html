@@ -1,0 +1,32 @@
+{% extends 'default.html' %}
+{% block title %}Play Lyric{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="innerPanel">
+        <div class="songInfo">
+            <p class="title"></p>
+            <p class="album"></p>
+            <p class="artist"></p>
+        </div>
+        <div class="play">
+            <input type="text" name="enter" id="enter">
+            <div class="percentage">
+                <span class="complete"></span> / <span class="total"></span>
+            </div>
+            <div class="lyricContainer">
+                <div class="lyricColumn"></div>
+                <div class="lyricColumn"></div>
+                <div class="lyricColumn"></div>
+                <div class="lyricColumn"></div>
+                <div class="lyricColumn"></div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    getSong('{{ song_id }}');
+</script>
+{% endblock %}

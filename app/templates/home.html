@@ -2,8 +2,12 @@
 {% block title %}Home{% endblock %}
 {% block content %}
 <div class="panel">
-    <div>
-        <p>It work</p>
+    <div class="innerPanel">
+        <h1>Welcome to Lyric</h1>
+        <h3>Songs:</h3>
+        {% for song in songs %}
+        <a href="/play/{{ song._id }}">{{ song.title }}</a>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

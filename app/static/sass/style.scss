@@ -21,6 +21,15 @@ $max-width: 1000px;
         max-width: $max-width;
         height: 60px;
         margin: 0 auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
     }
 }
 
@@ -30,12 +39,60 @@ $max-width: 1000px;
     .panel {
         width: 100%;
         display: flex;
-    
-        div {
+
+        .innerPanel {
             width: 100%;
             max-width: $max-width;
             height: 60px;
             margin: 0 auto;
+        }
+    }
+}
+
+.songInfo {
+    p {
+        margin: 2px 0;
+    }
+
+    .title {
+        font-size: 1.2em;
+    }
+}
+
+.play {
+    input {
+        margin: 15px 5px;
+        padding: 10px;
+        font-size: 1.1em;
+    }
+
+    .percentage {
+        float: right;
+        font-size: 2em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .lyricContainer {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+
+        .lyricColumn {
+            width: 20%;
+            margin: 0.5px;
+
+            .lyricBox {
+                width: 100%;
+                height: 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 1px;
+
+                &.covered {
+                    background-color: grey;
+                }
+            }
         }
     }
 }
