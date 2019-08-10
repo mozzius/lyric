@@ -7,12 +7,11 @@ function getSong(song_id) {
     })
 }
 
-function play(song) {
-    $('.title').text(song.title)
-    $('.album').text(song.album)
-    $('.artist').text(song.artist)
+function play(data) {
+    $('.title').text(data.song.title)
+    $('.collection').text(data.collection.title)
 
-    var lyrics = song.lyrics.split(' ').map(function (word) {
+    var lyrics = data.song.lyrics.split(' ').map(function (word) {
         return {
             simple: word.toLowerCase().replace(/[^\w]|_/g, ''),
             display: word,

@@ -4,10 +4,21 @@
 <div class="panel">
     <div class="innerPanel">
         <h1>Welcome to Lyric</h1>
-        <h3>Songs:</h3>
-        {% for song in songs %}
-        <a href="/play/{{ song._id }}">{{ song.title }}</a>
-        {% endfor %}
+        <div class="collections">
+            {% for collection in collections %}
+            <div class="collection">
+                <div class="main">
+                    <p class="title">{{ collection.title }}</p>
+                    <img src="{{ collection.image }}" alt="{{ collection.title }}">
+                </div>
+                <div class="songs">
+                    {% for song in collection.songs %}
+                    <a href="/play/{{ song._id }}">{{ song.title }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}

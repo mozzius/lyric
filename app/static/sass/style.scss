@@ -15,6 +15,7 @@ $max-width: 1000px;
     display: flex;
     top: 0;
     left: 0;
+    background-color: white;
 
     div {
         width: 100%;
@@ -27,7 +28,10 @@ $max-width: 1000px;
         align-items: center;
 
         a {
-            color: black;
+            background-color: black;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 3px;
             text-decoration: none;
         }
     }
@@ -45,6 +49,48 @@ $max-width: 1000px;
             max-width: $max-width;
             height: 60px;
             margin: 0 auto;
+        }
+    }
+}
+
+.collections {
+    .collection {
+        background-color: white;
+        margin: 20px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+        border-radius: 8px;
+        overflow: hidden;
+
+        .main {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+
+            .title {
+                margin: 5px 10px;
+                font-size: 2em;
+                display: inline;
+            }
+
+            img {
+                height: 80px;
+                width: auto;
+            }
+        }
+
+        .songs {
+            width: 100%;
+
+            a {
+                color: black;
+                display: block;
+                width: calc(100% - 40px);
+                padding: 5px 20px;
+                border-top: 1px solid rgba(0, 0, 0, .2);
+            }
         }
     }
 }
@@ -93,6 +139,46 @@ $max-width: 1000px;
                     background-color: grey;
                 }
             }
+        }
+    }
+}
+
+.error {
+    background-color: white;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    border-radius: 8px;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    div {
+        background-color: red;
+        width: 10px;
+        height: 80px;
+    }
+}
+
+form {
+    background-color: white;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    border-radius: 8px;
+    padding: 20px 10px;
+
+    div {
+        margin: 10px;
+
+        label {
+            display: block;
+        }
+
+        input {
+            margin: 15px 5px;
+            padding: 10px;
+            font-size: 1.1em;
         }
     }
 }
