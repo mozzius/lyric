@@ -16,6 +16,7 @@ $max-width: 1000px;
     top: 0;
     left: 0;
     background-color: white;
+    z-index: 10;
 
     .inner {
         width: 100%;
@@ -76,7 +77,6 @@ $max-width: 1000px;
         .innerPanel {
             width: 100%;
             max-width: $max-width;
-            height: 60px;
             margin: 0 auto;
         }
     }
@@ -100,11 +100,14 @@ $max-width: 1000px;
 
             .title {
                 margin: 5px 10px;
-                font-size: 2em;
+                font-size: 1.7em;
                 display: inline;
                 text-decoration: none;
                 color: black;
                 cursor: pointer;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
 
                 &:hover {
                     text-decoration: underline;
@@ -123,8 +126,8 @@ $max-width: 1000px;
             a {
                 color: black;
                 display: block;
-                width: calc(100% - 40px);
-                padding: 5px 20px;
+                width: calc(100% - 20px);
+                padding: 5px 10px;
                 border-top: 1px solid rgba(0, 0, 0, .2);
                 transition: background-color 0.3s ease;
 
@@ -157,29 +160,40 @@ $max-width: 1000px;
     }
 }
 
-.play {
-    margin-bottom: 30px;
+.stickybox {
+    position: sticky;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    top: 60px;
+    background-color: white;
 
     input {
-        margin: 15px 5px;
         padding: 10px;
         font-size: 1.1em;
+        width: calc(100% - 200px);
+        max-width: 350px;
     }
 
     .percentage {
-        float: right;
         font-size: 2em;
         font-variant-numeric: tabular-nums;
     }
+}
+
+.play {
+    margin-bottom: 30px;
 
     .lyricContainer {
         width: 100%;
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
 
         .lyricColumn {
-            width: 20%;
-            margin: 0.5px;
+            width: calc(20% - 0.8px);
 
             .lyricBox {
                 width: 100%;
@@ -187,7 +201,7 @@ $max-width: 1000px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin: 1px;
+                margin: 1px 0;
 
                 &.covered {
                     background-color: grey;
