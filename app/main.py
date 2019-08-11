@@ -22,6 +22,10 @@ def home():
 def play(song_id):
     return render_template("play.html", song_id=song_id)
 
+@app.route("/collection/<collection>")
+def viewCollection(collection):
+    collection = db.getCollectionWithSongsFromID(collection)
+    return render_template("collection.html", collection=collection)
 
 @app.route("/add/song", methods=["GET", "POST"])
 def addSong():
@@ -48,7 +52,9 @@ def addCollection():
                 "title": request.form["title"],
                 "image": request.form["image"],
             }
-            return redirect("/play/" + str(db.addCollection(collection)))
+            #return redirect("/collection/" + str(db.addCollection(collection)))
+            print(db.addCollection(collection))
+            return redirect('/')
         except Exception as e:
             print(e)
             return render_template("addCollection.html", error=True)

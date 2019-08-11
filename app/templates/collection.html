@@ -1,14 +1,12 @@
 {% extends 'default.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}{{ collection.title }}{% endblock %}
 {% block content %}
 <div class="panel">
     <div class="innerPanel">
-        <h1>Welcome to Lyric</h1>
         <div class="collections">
-            {% for collection in collections %}
             <div class="collection">
                 <div class="main">
-                    <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
+                    <p class="title">{{ collection.title }}</p>
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
                 </div>
                 <div class="songs">
@@ -17,7 +15,6 @@
                     {% endfor %}
                 </div>
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
