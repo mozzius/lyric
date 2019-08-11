@@ -52,9 +52,7 @@ def addCollection():
                 "title": request.form["title"],
                 "image": request.form["image"],
             }
-            #return redirect("/collection/" + str(db.addCollection(collection)))
-            print(db.addCollection(collection))
-            return redirect('/')
+            return redirect("/collection/" + str(db.addCollection(collection)))
         except Exception as e:
             print(e)
             return render_template("addCollection.html", error=True)
