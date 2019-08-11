@@ -9,9 +9,14 @@ except ImportError:
 
 app = Flask(__name__)
 
-app.wsgi_app = SassMiddleware(
-    app.wsgi_app, {"main": ("static/sass", "static/css", "/static/css")}
-)
+try:
+    app.wsgi_app = SassMiddleware(
+        app.wsgi_app, {"main": ("static/sass", "static/css", "/static/css")}
+    )
+except ModuleNotFoundError:
+    app.wsgi_app = SassMiddleware(
+        app.wsgi_app, {"app.main": ("static/sass", "static/css", "/static/css")}
+    )
 
 # VIEWS
 
