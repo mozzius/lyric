@@ -10,6 +10,7 @@ function getSong(song_id) {
 function play(data) {
     $('.title').text(data.song.title)
     $('.collection').text(data.collection.title)
+    $('.collection').attr('href', '/collection/'+data.collection._id.$oid)
 
     var lyrics = data.song.lyrics.split(' ').map(function (word) {
         return {

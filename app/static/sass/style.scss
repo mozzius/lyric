@@ -137,12 +137,23 @@ $max-width: 1000px;
 }
 
 .songInfo {
-    p {
+    margin: 10px 0;
+
+    .title {
+        font-size: 1.5em;
         margin: 2px 0;
     }
 
-    .title {
+    .collection {
         font-size: 1.2em;
+        text-decoration: none;
+        color: black;
+        cursor: pointer;
+        margin: 2px 0;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 }
 
