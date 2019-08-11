@@ -90,6 +90,12 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
         box-shadow: $shadow;
         border-radius: 8px;
         overflow: hidden;
+        height: 80px;
+
+        &:hover,
+        &.expanded {
+            height: initial;
+        }
 
         .main {
             width: 100%;

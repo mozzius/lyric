@@ -170,9 +170,9 @@ def getSong(song_id):
 
 
 if __name__ == "__main__":
+    app.secret_key = "localhost"
     app.wsgi_app = SassMiddleware(
         app.wsgi_app, {"main": ("static/sass", "static/css", "/static/css")}
     )
-    app.secret_key = "localhost"
     app.run(debug=True, host="0.0.0.0", port=8000)
 
