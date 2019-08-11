@@ -3,12 +3,19 @@
 {% block content %}
 <div class="panel">
     <div class="innerPanel">
+        {% if current_user.is_authenticated %}
+        <h1>Hello, {{ current_user.username }}!</h1>
+        {% else %}
         <h1>Welcome to Lyric</h1>
+        {% endif %}
         <div class="collections">
             {% for collection in collections %}
             <div class="collection">
                 <div class="main">
-                    <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
+                    <div>
+                        <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
+                        <p class="user">{{ collection.user_name }}</p>
+                    </div>
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
                 </div>
                 <div class="songs">

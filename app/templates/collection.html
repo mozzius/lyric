@@ -6,7 +6,10 @@
         <div class="collections">
             <div class="collection">
                 <div class="main">
-                    <p class="title">{{ collection.title }}</p>
+                    <div>
+                        <p class="title">{{ collection.title }}</p>
+                        <p class="user">{{ collection.user_name }}</p>
+                    </div>
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
                 </div>
                 <div class="songs">

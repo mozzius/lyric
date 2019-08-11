@@ -1,4 +1,5 @@
 $max-width: 1000px;
+$shadow: 0 2px 5px rgba(0, 0, 0, .3);
 
 * {
     font-family: 'Open Sans', Helvetica, sans-serif;
@@ -86,7 +87,7 @@ $max-width: 1000px;
     .collection {
         background-color: white;
         margin: 20px 0;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+        box-shadow: $shadow;
         border-radius: 8px;
         overflow: hidden;
 
@@ -98,19 +99,33 @@ $max-width: 1000px;
             justify-content: space-between;
             align-items: flex-start;
 
-            .title {
-                margin: 5px 10px;
-                font-size: 1.7em;
-                display: inline;
-                text-decoration: none;
-                color: black;
-                cursor: pointer;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                overflow: hidden;
+            div {
 
-                &:hover {
+                a {
+                    text-decoration: none;
+                    color: black;
+                    cursor: pointer;
+                }
+
+                a:hover {
                     text-decoration: underline;
+                }
+
+                .title {
+                    margin: 5px 10px 0;
+                    font-size: 1.7em;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+
+                }
+
+                .user {
+                    margin: 0 10px;
+                    font-size: 1.2em;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
                 }
             }
 
@@ -214,7 +229,7 @@ $max-width: 1000px;
 .error {
     background-color: white;
     margin: 20px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    box-shadow: $shadow;
     border-radius: 8px;
     height: 80px;
     display: flex;
@@ -234,7 +249,7 @@ $max-width: 1000px;
 form {
     background-color: white;
     margin: 20px 0;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+    box-shadow: $shadow;
     border-radius: 8px;
     padding: 20px 10px;
 
@@ -246,6 +261,7 @@ form {
         }
 
         input[type=text],
+        input[type=password],
         select,
         textarea {
             margin: 15px 5px;

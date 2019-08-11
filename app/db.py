@@ -1,11 +1,16 @@
-import pymongo
 from bson import ObjectId, json_util
+import pymongo
+import re
+import hashlib
+import bleach
+import datetime
 
 client = pymongo.MongoClient()
 
 db = client.lyric
 songs = db.songs
 collections = db.collections
+users = db.users
 
 
 def getSongFromID(id):
@@ -33,6 +38,7 @@ def getCollectionWithSongsFromID(id):
     collection = getCollectionFromID(id)
     return {
         "_id": collection["_id"],
+        "user_name": getUser(collection["user_id"])["username"],
         "title": collection["title"],
         "image": collection["image"],
         "songs": getSongsFromCollectionID(collection["_id"]),
@@ -45,6 +51,7 @@ def getCollectionsWithSongs():
         collections.append(
             {
                 "_id": collection["_id"],
+                "user_name": getUser(collection["user_id"])["username"],
                 "title": collection["title"],
                 "image": collection["image"],
                 "songs": getSongsFromCollectionID(collection["_id"]),
@@ -57,6 +64,7 @@ def addSong(song):
     assert song["title"]
     assert song["collection_id"]
     assert song["lyrics"]
+    assert song["user_id"]
     assert (
         songs.find(
             {"title": song["title"], "collection_id": ObjectId(song["collection_id"])}
@@ -65,12 +73,54 @@ def addSong(song):
     )
     song["collection_id"] = ObjectId(song["collection_id"])
     song["lyrics"] = song["lyrics"].replace("\n", " ")
+    song["date"] = datetime.datetime.utcnow()
     return songs.insert_one(song).inserted_id
 
 
 def addCollection(collection):
     assert collection["title"]
     assert collection["image"]
+    assert collection["user_id"]
     assert collections.find({"title": collection["title"]}).count() == 0
+    collection["date"] = datetime.datetime.utcnow()
     return collections.insert_one(collection).inserted_id
+
+
+# USER STUFF
+
+
+def sha256(msg):
+    return hashlib.sha256(msg.encode("utf-8")).digest()
+
+
+def addUser(name, email, password):
+    # cleaning inputs
+    name = bleach.clean(name)
+    match = re.match(
+        "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", email
+    )
+    password = sha256(password)
+    try:
+        assert match
+        assert name != ""
+        assert users.find({"email": email}).count() == 0
+        assert users.find({"username": name}).count() == 0
+        user_id = users.insert_one({"username": name, "email": email, "password": password}).inserted_id
+    except Exception as e:
+        print(e)
+        return None
+    else:
+        return str(user_id)
+
+
+def verifyUser(email, password):
+    user = users.find_one({"email": email})
+    if user and user["password"] == sha256(password):
+        return str(user["_id"])
+    else:
+        return None
+
+
+def getUser(id):
+    return users.find_one({"_id": ObjectId(id)})
 

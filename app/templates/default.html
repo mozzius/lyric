@@ -16,10 +16,18 @@
     <div class="nav">
         <div class="inner">
             <a href="/" class="logo">Lyric</a>
+            {% if current_user.is_authenticated %}
             <div class="buttonGroup">
                 <a href="/add/collection">Add Collection</a>
                 <a href="/add/song">Add Song</a>
+                <a href="/logout">Log Out</a>
             </div>
+            {% else %}
+            <div class="buttonGroup">
+                <a href="/signup">Sign Up</a>
+                <a href="/login">Log In</a>
+            </div>
+            {% endif %}
         </div>
     </div>
     <div class="container">
