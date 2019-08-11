@@ -1,7 +1,11 @@
 from flask import Flask, render_template, request, redirect
 from sassutils.wsgi import SassMiddleware
 from bson import json_util
-import db
+
+try:
+    import db
+except ImportError:
+    import app.db as db
 
 app = Flask(__name__)
 
