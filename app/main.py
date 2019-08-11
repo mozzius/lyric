@@ -15,7 +15,7 @@ try:
     )
 except ModuleNotFoundError:
     app.wsgi_app = SassMiddleware(
-        app.wsgi_app, {"app.main": ("static/sass", "static/css", "/static/css")}
+        app.wsgi_app, {"app.main": ("app/static/sass", "app/static/css", "app/static/css")}
     )
 
 # VIEWS
