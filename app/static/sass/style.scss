@@ -91,6 +91,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
         border-radius: 8px;
         overflow: hidden;
         max-height: 80px;
+        transition: max-height 1s ease;
 
         &:hover,
         &.expanded {
