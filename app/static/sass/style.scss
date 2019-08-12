@@ -91,11 +91,11 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
         border-radius: 8px;
         overflow: hidden;
         max-height: 80px;
-        transition: max-height 1s ease;
+        transition: max-height 0.5s ease;
 
         &:hover,
         &.expanded {
-            max-height: initial;
+            max-height: 1000vh;
         }
 
         .main {
