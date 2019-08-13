@@ -94,9 +94,12 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
         max-height: 80px;
         transition: max-height 0.5s ease;
 
-        &:hover,
+        &:hover {
+            max-height: 300px;
+        }
+
         &.expanded {
-            max-height: 1000vh;
+            max-height: initial;
         }
 
         .main {
@@ -108,24 +111,41 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
             align-items: flex-start;
 
             div {
+                height: calc(100% - 15px);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 5px 10px 10px;
 
                 a {
                     text-decoration: none;
                     color: black;
                     cursor: pointer;
-                }
 
-                a:hover {
-                    text-decoration: underline;
+                    &:hover {
+                        text-decoration: underline;
+                    }
                 }
 
                 .title {
-                    margin: 5px 10px 0;
+                    margin: 0;
                     font-size: 1.7em;
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
+                }
 
+                .random {
+                    font-size: 0.8em;
+                    background-color: black;
+                    border: 1px solid black;
+                    color: white;
+                    padding: 3px 10px;
+                    border-radius: 3px;
+                    text-decoration: none;
+                    display: block;
+                    width: max-content;
                 }
 
                 .user {
@@ -154,6 +174,10 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
                 padding: 5px 10px;
                 border-top: 1px solid rgba(0, 0, 0, .2);
                 transition: background-color 0.3s ease;
+
+                &.all {
+                    text-align: center;
+                }
 
                 &:hover {
                     background-color: rgba(0, 0, 0, .1);

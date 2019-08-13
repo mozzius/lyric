@@ -8,7 +8,7 @@
                 <div class="main">
                     <div>
                         <p class="title">{{ collection.title }}</p>
-                        <p class="user">{{ collection.user_name }}</p>
+                        <a href="/random/{{ collection._id }}" class="random">Random Song</a>
                     </div>
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
                 </div>

@@ -14,14 +14,15 @@
                 <div class="main">
                     <div>
                         <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
-                        <p class="user">{{ collection.user_name }}</p>
+                        <a href="/random/{{ collection._id }}" class="random">Random Song</a>
                     </div>
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
                 </div>
                 <div class="songs">
-                    {% for song in collection.songs %}
+                    {% for song in collection.songs[:5] %}
                     <a href="/play/{{ song._id }}">{{ song.title }}</a>
                     {% endfor %}
+                    <a href="/collection/{{ collection._id }}" class="all">View All</a>
                 </div>
             </div>
             {% endfor %}

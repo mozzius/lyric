@@ -8,6 +8,7 @@ from flask_login import (
 )
 from sassutils.wsgi import SassMiddleware
 from bson import json_util, ObjectId
+import random
 
 try:
     import db
@@ -116,6 +117,12 @@ def home():
 @app.route("/play/<song_id>")
 def play(song_id):
     return render_template("play.html", song_id=song_id)
+
+@app.route("/random/<collection_id>")
+def playRandom(collection_id):
+    collection = db.getCollectionWithSongsFromID(collection_id)
+    song_id = random.choice(collection["songs"])["_id"]
+    return render_template("play.html", song_id=song_id, hidden=True)
 
 
 @app.route("/collection/<collection>")
