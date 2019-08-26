@@ -8,9 +8,15 @@ function getSong(song_id) {
 }
 
 function play(data) {
+    var startTime = Date.now()
     $('.title').text(data.song.title)
     $('.collection').text(data.collection.title)
     $('.collection').attr('href', '/collection/' + data.collection._id.$oid)
+
+    $('#back').text('View all songs in ' + data.collection.title)
+    $('#back').attr('href', '/collection/' + data.collection._id.$oid)
+    $('#random').text('Play another random song in ' + data.collection.title)
+    $('#random').attr('href', '/random/' + data.collection._id.$oid)
 
     var lyrics = data.song.lyrics.split(' ').map(function (word) {
         return {
@@ -44,9 +50,20 @@ function play(data) {
                 arr[index].discovered = true
                 var complete = parseInt($('.complete').text()) + 1
                 $('.complete').text(complete.toString())
+                if (complete === arr.length) {
+                    var time = Date.now() - startTime
+                    createPopup(time)
+                }
             }
         })
     })
+}
+
+function createPopup(time) {
+    var minutes = Math.floor(time / 60000)
+    var seconds = Math.floor(time / 1000) % 60
+    $('.popupText').text(`You completed this song in ${minutes}m ${seconds}s`)
+    $('.popup').removeClass('hidden')
 }
 
 $(document).ready(function () {

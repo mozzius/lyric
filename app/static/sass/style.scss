@@ -39,7 +39,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
             border-radius: 3px;
             text-decoration: none;
             transition-property: padding, margin;
-            transition: 0.5s ease;
+            transition: 0.3s ease;
 
             &:hover {
                 margin: 0;
@@ -84,6 +84,73 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
     }
 }
 
+.popup {
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, .3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+
+    &.hidden {
+        display: none;
+    }
+
+    .box {
+        background-color: white;
+        border-radius: 10px;
+        width: calc(100% - 20px);
+        max-width: 500px;
+        margin: 10px;
+        padding: 10px;
+        box-shadow: $shadow;
+        display: flex;
+        flex-direction: column;
+
+        h1,
+        .popupText {
+            text-align: center;
+        }
+
+        .buttonGroup {
+            display: flex;
+            flex-direction: column;
+
+            a {
+                background-color: white;
+                border: 1px solid black;
+                color: black;
+                padding: 3px 10px;
+                border-radius: 3px;
+                text-decoration: none;
+                transition-property: color, background-color;
+                transition: 0.3s ease;
+                margin-top: 10px;
+                text-align: center;
+
+                &:hover {
+                    background-color: black;
+                    color: white;
+                }
+
+                &.dark {
+                    background-color: black;
+                    color: white;
+                    padding: 15px;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .collections {
     .collection {
         background-color: white;
@@ -112,6 +179,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
 
             div {
                 height: calc(100% - 15px);
+                width: calc(100% - 100px);
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
@@ -134,6 +202,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     overflow: hidden;
+                    max-width: 100%;
                 }
 
                 .random {
@@ -159,7 +228,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
 
             img {
                 height: 80px;
-                width: auto;
+                width: 80px;
             }
         }
 
@@ -210,6 +279,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
 }
 
 .stickybox {
+    position: -webkit-sticky;
     position: sticky;
     display: flex;
     flex-direction: row;

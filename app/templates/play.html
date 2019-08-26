@@ -24,12 +24,25 @@
                 <div class="lyricColumn"></div>
             </div>
         </div>
-        </div>
     </div>
+</div>
 </div>
 {% endblock %}
 {% block script %}
 <script>
     getSong('{{ song_id }}');
 </script>
+{% endblock %}
+{% block popup %}
+<div class="popup hidden">
+    <div class="box">
+        <h1>Song Complete!</h1>
+        <p class="popupText"></p>
+        <div class="buttonGroup">
+            <a href="/play/{{ song_id }}" class="dark">Play Again</a>
+            <a href="" id="back"></a>
+            <a href="" id="random"></a>
+        </div>
+    </div>
+</div>
 {% endblock %}

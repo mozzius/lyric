@@ -8,9 +8,13 @@
                 <div class="main">
                     <div>
                         <p class="title">{{ collection.title }}</p>
+                        {% if collection.songs %}
                         <a href="/random/{{ collection._id }}" class="random">Random Song</a>
+                        {% endif %}
                     </div>
+                    {% if collection.image %}
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">
+                    {% endif %}
                 </div>
                 <div class="songs">
                     {% for song in collection.songs %}
