@@ -5,12 +5,18 @@ import hashlib
 import bleach
 import datetime
 
+try:
+    from main import current_user
+except ImportError:
+    from app.main import current_user
+
 client = pymongo.MongoClient()
 
 db = client.lyric
 songs = db.songs
 collections = db.collections
 users = db.users
+rooms = db.rooms
 
 
 def getSongFromID(id):
@@ -86,6 +92,25 @@ def addCollection(collection):
     return collections.insert_one(collection).inserted_id
 
 
+# MULTIPLAYER STUFF
+
+
+def createRoom(name):
+    assert name != None
+    room = {"name": name, "members": [current_user.get_id()]}
+    return rooms.insert_one(room).inserted_id
+
+
+def joinRoom(id):
+    room = rooms.find_one({"_id": ObjectId(id)})
+    if room.count() > 0:
+        rooms.update(
+            {"_id": ObjectId(id)}, {"members": room.members + [current_user.get_id()]}
+        )
+    else:
+        return None
+
+
 # USER STUFF
 
 
@@ -105,7 +130,9 @@ def addUser(name, email, password):
         assert name != ""
         assert users.find({"email": email}).count() == 0
         assert users.find({"username": name}).count() == 0
-        user_id = users.insert_one({"username": name, "email": email, "password": password}).inserted_id
+        user_id = users.insert_one(
+            {"username": name, "email": email, "password": password}
+        ).inserted_id
     except Exception as e:
         print(e)
         return None

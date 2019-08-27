@@ -8,6 +8,7 @@ from flask_login import (
 )
 from sassutils.wsgi import SassMiddleware
 from bson import json_util, ObjectId
+from flask_socketio import SocketIO
 import random
 
 try:
@@ -16,6 +17,7 @@ except ImportError:
     import app.db as db
 
 app = Flask(__name__)
+
 login = LoginManager(app)
 
 # USER STUFF
@@ -118,6 +120,7 @@ def home():
 def play(song_id):
     return render_template("play.html", song_id=song_id)
 
+
 @app.route("/random/<collection_id>")
 def playRandom(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
@@ -146,7 +149,7 @@ def addSong():
             return redirect("/play/" + str(db.addSong(song)))
         except Exception as e:
             print(e)
-            return render_template("addSong.html", error=True, collections=collections)
+            return render_template("addSong.html", collections=collections, error=True)
     else:
         return render_template("addSong.html", collections=collections)
 
@@ -169,11 +172,53 @@ def addCollection():
         return render_template("addCollection.html")
 
 
+# MULTIPLAYER
+
+
+@app.route("/room", methods=["GET", "POST"])
+@login_required
+def roomMenu():
+    collections = db.getCollectionList()
+    if request.method == "POST":
+        room = None
+        try:
+            room = request.form["name"]
+            return redirect("/room/" + str(db.createRoom(room)))
+        except Exception as e:
+            print(e)
+            return render_template(
+                "room.html",
+                collections=collections,
+                error=("An error occurred creating a room"),
+            )
+    else:
+        return render_template("room.html", collections=collections)
+
+
+@app.route("/room/<room_id>")
+@login_required
+def playRoom():
+    room = db.getRoom()
+    if room == None:
+        collections = db.getCollectionList()
+        return render_template("room.html", collections=collections, error="Room not found :(")
+    else:
+        return render_template("play.html", song_id=room.song, room=str(room._id))
+
+
 # API
+
+
 @app.route("/api/getSong/<song_id>")
 def getSong(song_id):
     song = db.getSongFromID(song_id)
     return json_util.dumps(song)
+
+
+@app.route("/api/getCollection/<collection_id>")
+def getCollection(collection_id):
+    collection = db.getCollectionWithSongsFromID(collection_id)
+    return json_util.dumps(collection)
 
 
 if __name__ == "__main__":
