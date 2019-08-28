@@ -6,6 +6,7 @@ from flask_login import (
     current_user,
     logout_user,
 )
+from flask_socketio import SocketIO, emit, disconnect, join_room, close_room, leave_room
 from sassutils.wsgi import SassMiddleware
 from bson import json_util, ObjectId
 import random
@@ -16,6 +17,7 @@ except ImportError:
     import app.db as db
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 login = LoginManager(app)
 
 # USER STUFF
@@ -118,6 +120,7 @@ def home():
 def play(song_id):
     return render_template("play.html", song_id=song_id)
 
+
 @app.route("/random/<collection_id>")
 def playRandom(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
@@ -146,7 +149,7 @@ def addSong():
             return redirect("/play/" + str(db.addSong(song)))
         except Exception as e:
             print(e)
-            return render_template("addSong.html", error=True, collections=collections)
+            return render_template("addSong.html", collections=collections, error=True)
     else:
         return render_template("addSong.html", collections=collections)
 
@@ -169,11 +172,124 @@ def addCollection():
         return render_template("addCollection.html")
 
 
+# MULTIPLAYER
+
+
+@app.route("/room", methods=["GET", "POST"])
+@login_required
+def roomMenu():
+    collections = db.getCollectionList()
+    if request.method == "POST":
+        room = None
+        try:
+            room = request.form.get("name")
+            song_id = request.form.get("song_id")
+            return redirect("/room/" + str(db.createRoom(room, song_id)))
+        except Exception as e:
+            print(e)
+            return render_template(
+                "room.html",
+                collections=collections,
+                error=("An error occurred creating a room"),
+            )
+    else:
+        return render_template("room.html", collections=collections)
+
+
+@app.route("/room/<room_id>")
+@login_required
+def playRoom(room_id):
+    room = db.getRoom(room_id)
+    if room == None:
+        collections = db.getCollectionList()
+        return render_template(
+            "room.html", collections=collections, error=("Error fetching room :(")
+        )
+    return render_template(
+        "play.html", multiplayer=True, song_id=room["song_id"], room=str(room["_id"])
+    )
+
+
+@app.route("/join", methods=["GET"])
+@login_required
+def roomJoin():
+    name = request.args.get("name")
+    room = db.joinRoom(name)
+    if room == None:
+        collections = db.getCollectionList()
+        return render_template(
+            "room.html",
+            collections=collections,
+            error=("Room '{}' not found".format(name)),
+        )
+    else:
+        return redirect("/room/" + str(room["_id"]))
+
+
+@socketio.on("connect")
+def connectHandler():
+    if not current_user.is_authenticated:
+        return False  # not allowed here
+    else:
+        print("User joined: {}".format(current_user.username))
+
+
+@socketio.on("join")
+def joinHandler(data):
+    print(current_user.username + " wants to join room " + data["room"])
+    join_room(data["room"])
+    emit("members", {"members": db.getRoomMembers(data["room"])}, broadcast=True)
+
+
+@socketio.on("send update")
+def updateHandler(data):
+    emit(
+        "update",
+        {
+            "id": current_user.get_id(),
+            "username": current_user.username,
+            "numerator": data["numerator"],
+            "denominator": data["denominator"],
+        },
+        room=data["room"],
+        broadcast=True,
+    )
+
+
+@socketio.on("client won")
+def victoryHandler(data):
+    emit(
+        "victory",
+        {"winner": current_user.username, "time": data["time"]},
+        room=data["room"],
+        broadcast=True,
+    )
+    close_room(data["room"])
+    db.deleteRoom(data["room"])
+
+
+@socketio.on("disconnect")
+def disconnectHandler(data):
+    leave_room()
+    try:
+        db.leaveRoom()
+    except Exception as e:
+        print(e)
+
+
 # API
+
+
 @app.route("/api/getSong/<song_id>")
 def getSong(song_id):
     song = db.getSongFromID(song_id)
     return json_util.dumps(song)
+
+
+@app.route("/api/getCollection/<collection_id>")
+def getCollection(collection_id):
+    collection = db.getCollectionWithSongsFromID(collection_id)
+    return json_util.dumps(collection)
 
 
 if __name__ == "__main__":
@@ -181,5 +297,5 @@ if __name__ == "__main__":
     app.wsgi_app = SassMiddleware(
         app.wsgi_app, {"main": ("static/sass", "static/css", "/static/css")}
     )
-    app.run(debug=True, host="0.0.0.0", port=8000)
+    socketio.run(app, host="0.0.0.0", port=8000, debug=True)
 

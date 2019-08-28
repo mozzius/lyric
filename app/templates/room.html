@@ -1,0 +1,66 @@
+{% extends 'default.html' %}
+{% block title %}Multiplayer Rooms{% endblock %}
+{% block content %}
+<div class="panel">
+    <div class="innerPanel">
+        {% if error %}
+        <div class="error">
+            <div></div>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+        <h1>Join a Room</h1>
+        <form action="/join" method="get" id="login">
+            <div>
+                <label for="name">Room Name:</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div>
+                <input type="submit" value="Join Room">
+            </div>
+        </form>
+        <h1>Create a Room</h1>
+        <form action="/room" method="post" id="login">
+            <div>
+                <label for="name">Room Name:</label>
+                <input type="text" name="name" id="name" required>
+            </div>
+            <div>
+                <label for="collection_id">Collection:</label>
+                <select name="collection_id" id="collection_id" required>
+                    {% for collection in collections %}
+                    <option value="{{ collection._id }}">{{ collection.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="song_id">Song:</label>
+                <select name="song_id" id="song_id" disabled required>
+                    <option selected>Select a Collection</option>
+                </select>
+            </div>
+            <div>
+                <input type="submit" value="Create Room">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    $('#collection_id').click(function () {
+        var id = $(this).val()
+        $.ajax({
+            url: '/api/getCollection/' + id,
+            cache: false,
+            dataType: 'json',
+            success: function (data) {
+                $('#song_id').empty().prop('disabled', false)
+                data.songs.forEach(song => {
+                    $('#song_id').append(`<option value="${song._id.$oid}">${song.title}</option>`)
+                });
+            },
+        })
+    })
+</script>
+{% endblock %}

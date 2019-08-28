@@ -5,12 +5,18 @@ import hashlib
 import bleach
 import datetime
 
+try:
+    from main import current_user
+except ImportError:
+    from app.main import current_user
+
 client = pymongo.MongoClient()
 
 db = client.lyric
 songs = db.songs
 collections = db.collections
 users = db.users
+rooms = db.rooms
 
 
 def getSongFromID(id):
@@ -86,6 +92,70 @@ def addCollection(collection):
     return collections.insert_one(collection).inserted_id
 
 
+# MULTIPLAYER STUFF
+
+
+def createRoom(name, song_id):
+    assert name != None
+    assert rooms.find({"name": name}).count() == 0
+    room = {
+        "name": name,
+        "song_id": song_id,
+        "members": [
+            {
+                "id": current_user.get_id(),
+                "username": current_user.username,
+                "numerator": 0,
+                "denominator": 0,
+            }
+        ],
+    }
+    return rooms.insert_one(room).inserted_id
+
+
+def joinRoom(name):
+    room = rooms.find_one({"name": name})
+    if room != None:
+        for member in room["members"]:
+            if current_user.get_id() == member["id"]:
+                return rooms.find_one({"_id": ObjectId(room["_id"])})
+        rooms.update(
+            {"_id": ObjectId(room["_id"])},
+            {
+                "members": room["members"]
+                + [
+                    {
+                        "id": current_user.get_id(),
+                        "username": current_user.username,
+                        "numerator": 0,
+                        "denominator": 0,
+                    }
+                ]
+            },
+        )
+        return rooms.find_one({"_id": ObjectId(room["_id"])})
+    else:
+        return None
+
+
+def getRoom(id):
+    return rooms.find_one({"_id": ObjectId(id)})
+
+def getRoomMembers(id):
+    return getRoom(id)["members"]
+
+
+def leaveRoom(user_id):
+    room = rooms.find_one({"members": ObjectId(user_id)})
+    rooms.update(
+        {"_id": ObjectId(id)}, {"members": [x for x in room.members if x.id != user_id]}
+    )
+
+
+def deleteRoom(id):
+    rooms.remove({"_id": ObjectId(id)})
+
+
 # USER STUFF
 
 
@@ -105,7 +175,9 @@ def addUser(name, email, password):
         assert name != ""
         assert users.find({"email": email}).count() == 0
         assert users.find({"username": name}).count() == 0
-        user_id = users.insert_one({"username": name, "email": email, "password": password}).inserted_id
+        user_id = users.insert_one(
+            {"username": name, "email": email, "password": password}
+        ).inserted_id
     except Exception as e:
         print(e)
         return None

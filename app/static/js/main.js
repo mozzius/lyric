@@ -1,13 +1,13 @@
-function getSong(song_id) {
+function getSong(song_id, multiplayer) {
     $.ajax({
         url: '/api/getSong/' + song_id,
         cache: false,
         dataType: 'json',
-        success: play,
+        success: multiplayer ? playMultiplayer : play,
     })
 }
 
-function play(data) {
+function play(data, sendCallback, winCallback) {
     var startTime = Date.now()
     $('.title').text(data.song.title)
     $('.collection').text(data.collection.title)
@@ -41,7 +41,6 @@ function play(data) {
 
     $('#enter').keyup(function () {
         var word = $('#enter').val().toLowerCase().replace(/[^\w]|_/g, '')
-        console.log(word)
         lyrics.forEach(function (lyric, index, arr) {
             if (lyric.simple === word && lyric.discovered === false) {
                 $('#enter').val('')
@@ -50,19 +49,71 @@ function play(data) {
                 arr[index].discovered = true
                 var complete = parseInt($('.complete').text()) + 1
                 $('.complete').text(complete.toString())
-                if (complete === arr.length) {
+
+                // sometimes it's a string saying 'success'
+                if (typeof sendCallback === 'function') {
+                    sendCallback(complete, lyrics.length)
+                }
+
+                if (complete === arr.length && $('.popup')[0].classList.contains('hidden')) {
                     var time = Date.now() - startTime
-                    createPopup(time)
+                    // if the callback exists, then hopefully the win screen will be
+                    // created by the server
+                    if (typeof winCallback !== 'function') {
+                        createPopup(time)
+                    } else {
+                        winCallback(time)
+                    }
                 }
             }
         })
     })
 }
 
-function createPopup(time) {
+function playMultiplayer(data) {
+    var room = new URL(window.location.href).pathname.slice(6)
+    var socket = io();
+
+    socket.on('connect', function () {
+        console.log('Connected')
+        socket.emit('join', { room });
+        var numerator = parseInt($('.complete').text())
+        var denominator = data.song.lyrics.split(' ').length
+        socket.emit('send update', { numerator, denominator, room })
+    });
+
+    socket.on('members', function (data) {
+        $('.members').empty()
+        data.members.forEach(function (member) {
+            var percentage = (member.denominator === 0 ? 0 : Math.floor((member.numerator / member.denominator) * 100))
+            $('.members').append(`<div class="member" id="${member.id}">${member.username} ${percentage}%</div>`)
+        })
+    })
+
+    socket.on('update', function (data) {
+        const { id, username, numerator, denominator } = data
+        var percentage = (denominator === 0 ? 0 : Math.floor((numerator / denominator) * 100))
+        $(`#${id}`).text(`${username} ${percentage}%`)
+    })
+
+    socket.on('victory', function (data) {
+        createPopup(data["time"], data["winner"])
+        socket.disconnect()
+    })
+
+    // play, with callbacks to send completed words
+    play(data, function (numerator, denominator) {
+        socket.emit('send update', { numerator, denominator, room })
+    }, function (time) {
+        socket.emit('client won', { time, room })
+        return true
+    })
+}
+
+function createPopup(time, winner = 'You') {
     var minutes = Math.floor(time / 60000)
     var seconds = Math.floor(time / 1000) % 60
-    $('.popupText').text(`You completed this song in ${minutes}m ${seconds}s`)
+    $('.popupText').text(`${winner} completed this song in ${minutes}m ${seconds}s`)
     $('.popup').removeClass('hidden')
 }
 

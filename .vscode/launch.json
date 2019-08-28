@@ -5,10 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "main.py",
+            "name": "Desktop | main.py",
             "type": "python",
             "request": "launch",
             "program": "C:\\Users\\Samuel\\Documents\\Documents\\Programming\\lyric\\app\\main.py",
+            "console": "integratedTerminal"
+        },
+
+        {
+            "name": "Laptop | main.py",
+            "type": "python",
+            "request": "launch",
+            "program": "C:\\Users\\Mozzi\\Documents\\Programming\\web\\lyric\\app\\main.py",
             "console": "integratedTerminal"
         }
     ]

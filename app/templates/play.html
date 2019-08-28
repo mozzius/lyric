@@ -1,6 +1,13 @@
 {% extends 'default.html' %}
 {% block title %}Play Lyric{% endblock %}
 {% block content %}
+{% if multiplayer %}
+<div class="panel dark">
+    <div class="innerPanel">
+        <div class="members"></div>
+    </div>
+</div>
+{% endif %}
 <div class="panel">
     <div class="innerPanel">
         <div class="songInfo">
@@ -29,9 +36,17 @@
 </div>
 {% endblock %}
 {% block script %}
+{% if multiplayer %}
 <script>
-    getSong('{{ song_id }}');
+    // song_id, multiplayer
+    getSong('{{ song_id }}', true);
 </script>
+{% else %}
+<script>
+    // song_id, multiplayer
+    getSong('{{ song_id }}', false);
+</script>
+{% endif %}
 {% endblock %}
 {% block popup %}
 <div class="popup hidden">
@@ -39,9 +54,13 @@
         <h1>Song Complete!</h1>
         <p class="popupText"></p>
         <div class="buttonGroup">
+            {% if multiplayer %}
+            <a href="/room" class="dark">Back to Rooms</a>
+            {% else %}
             <a href="/play/{{ song_id }}" class="dark">Play Again</a>
             <a href="" id="back"></a>
             <a href="" id="random"></a>
+            {% endif %}
         </div>
     </div>
 </div>
