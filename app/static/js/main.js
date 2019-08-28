@@ -72,7 +72,7 @@ function play(data, sendCallback, winCallback) {
 
 function playMultiplayer(data) {
     var room = new URL(window.location.href).pathname.slice(6)
-    var socket = io("http://" + document.domain + ":" + location.port + "/multiplayer");
+    var socket = io(location.protocol + "//" + document.domain + ":" + location.port + "/multiplayer");
 
     socket.on('connect', function () {
         console.log('Connected')

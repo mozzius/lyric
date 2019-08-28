@@ -200,10 +200,10 @@ def roomMenu():
 @login_required
 def playRoom(room_id):
     room = db.getRoom(room_id)
-    if room == None:
+    if room == None or current_user.get_id() not in [x["id"] for x in room["members"]]:
         collections = db.getCollectionList()
         return render_template(
-            "room.html", collections=collections, error=("Error fetching room :(")
+            "room.html", collections=collections, error=("Error joining room :(")
         )
     return render_template(
         "play.html", multiplayer=True, song_id=room["song_id"], room=str(room["_id"])
@@ -238,7 +238,12 @@ def connectHandler():
 def joinHandler(data):
     print(current_user.username + " wants to join room " + data["room"])
     join_room(data["room"])
-    emit("members", {"members": db.getRoomMembers(data["room"])}, broadcast=True)
+    emit(
+        "members",
+        {"members": db.getRoomMembers(data["room"])},
+        broadcast=True,
+        namespace="/multiplayer",
+    )
 
 
 @socketio.on("send update", namespace="/multiplayer")
