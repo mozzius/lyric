@@ -96,7 +96,8 @@ def addCollection(collection):
 
 
 def createRoom(name, song_id):
-    assert name != None
+    assert name
+    assert song_id
     assert rooms.find({"name": name}).count() == 0
     room = {
         "name": name,

@@ -226,7 +226,7 @@ def roomJoin():
         return redirect("/room/" + str(room["_id"]))
 
 
-@socketio.on("connect")
+@socketio.on("connect", namespace="/multiplayer")
 def connectHandler():
     if not current_user.is_authenticated:
         return False  # not allowed here
@@ -234,14 +234,14 @@ def connectHandler():
         print("User joined: {}".format(current_user.username))
 
 
-@socketio.on("join")
+@socketio.on("join", namespace="/multiplayer")
 def joinHandler(data):
     print(current_user.username + " wants to join room " + data["room"])
     join_room(data["room"])
     emit("members", {"members": db.getRoomMembers(data["room"])}, broadcast=True)
 
 
-@socketio.on("send update")
+@socketio.on("send update", namespace="/multiplayer")
 def updateHandler(data):
     emit(
         "update",
@@ -253,22 +253,24 @@ def updateHandler(data):
         },
         room=data["room"],
         broadcast=True,
+        namespace="/multiplayer",
     )
 
 
-@socketio.on("client won")
+@socketio.on("client won", namespace="/multiplayer")
 def victoryHandler(data):
     emit(
         "victory",
         {"winner": current_user.username, "time": data["time"]},
         room=data["room"],
         broadcast=True,
+        namespace="/multiplayer",
     )
     close_room(data["room"])
     db.deleteRoom(data["room"])
 
 
-@socketio.on("disconnect")
+@socketio.on("disconnect", namespace="/multiplayer")
 def disconnectHandler():
     print("{} has left".format(current_user.username))
     try:
