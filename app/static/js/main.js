@@ -101,6 +101,10 @@ function playMultiplayer(data) {
         socket.disconnect()
     })
 
+    socket.on('disconnect', function () {
+        console.log('Disconnected')
+    })
+
     // play, with callbacks to send completed words
     play(data, function (numerator, denominator) {
         socket.emit('send update', { numerator, denominator, room })
