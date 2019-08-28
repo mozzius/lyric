@@ -269,10 +269,10 @@ def victoryHandler(data):
 
 
 @socketio.on("disconnect")
-def disconnectHandler(data):
+def disconnectHandler():
     leave_room()
     try:
-        db.leaveRoom()
+        db.leaveRoom(current_user.get_id())
     except Exception as e:
         print(e)
 
