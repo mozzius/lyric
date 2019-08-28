@@ -118,10 +118,13 @@ def joinRoom(name):
     if room != None:
         for member in room["members"]:
             if current_user.get_id() == member["id"]:
-                return rooms.find_one({"_id": ObjectId(room["_id"])})
+                return room
+
         rooms.update(
-            {"_id": ObjectId(room["_id"])},
+            {"_id": room["_id"]},
             {
+                "name": room["name"],
+                "song_id": room["song_id"],
                 "members": room["members"]
                 + [
                     {
@@ -130,7 +133,7 @@ def joinRoom(name):
                         "numerator": 0,
                         "denominator": 0,
                     }
-                ]
+                ],
             },
         )
         return rooms.find_one({"_id": ObjectId(room["_id"])})
@@ -141,18 +144,22 @@ def joinRoom(name):
 def getRoom(id):
     return rooms.find_one({"_id": ObjectId(id)})
 
-def getRoomFromMember(user_id):
-    return rooms.find_one({"members": user_id})
 
 def getRoomMembers(id):
     return getRoom(id)["members"]
 
 
 def leaveRoom(user_id):
-    room = rooms.find_one({"members": user_id})
+    room = rooms.find_one({"members.id": user_id})
     rooms.update(
-        {"_id": ObjectId(id)}, {"members": [x for x in room.members if x.id != user_id]}
+        {"_id": room["_id"]},
+        {
+            "name": room["name"],
+            "song_id": room["song_id"],
+            "members": [x for x in room["members"] if x["id"] != user_id],
+        },
     )
+    return rooms.find_one({"_id": room["_id"]})
 
 
 def deleteRoom(id):
