@@ -3,6 +3,10 @@
 {% block content %}
 <div class="panel">
     <div class="innerPanel">
+        {% if multiplayer %}
+        <div class="members">
+        </div>
+        {% endif %}
         <div class="songInfo">
             {% if not hidden %}
             <p class="title"></p>
@@ -32,12 +36,12 @@
 {% if multiplayer %}
 <script>
     // song_id, multiplayer
-    getSong('{{ song_id }}', false);
+    getSong('{{ song_id }}', true);
 </script>
 {% else %}
 <script>
     // song_id, multiplayer
-    getSong('{{ song_id }}', true);
+    getSong('{{ song_id }}', false);
 </script>
 {% endif %}
 {% endblock %}

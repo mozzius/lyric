@@ -95,20 +95,62 @@ def addCollection(collection):
 # MULTIPLAYER STUFF
 
 
-def createRoom(name):
+def createRoom(name, song_id):
     assert name != None
-    room = {"name": name, "members": [current_user.get_id()]}
+    assert rooms.find({"name": name}).count() == 0
+    room = {
+        "name": name,
+        "song_id": song_id,
+        "members": [
+            {
+                "id": current_user.get_id(),
+                "username": current_user.username,
+                "numerator": 0,
+                "denominator": 0,
+            }
+        ],
+    }
     return rooms.insert_one(room).inserted_id
 
 
-def joinRoom(id):
-    room = rooms.find_one({"_id": ObjectId(id)})
-    if room.count() > 0:
+def joinRoom(name):
+    room = rooms.find_one({"name": name})
+    if room != None:
+        for member in room["members"]:
+            if current_user.get_id() == member["id"]:
+                return rooms.find_one({"_id": ObjectId(room["_id"])})
         rooms.update(
-            {"_id": ObjectId(id)}, {"members": room.members + [current_user.get_id()]}
+            {"_id": ObjectId(room["_id"])},
+            {
+                "members": room["members"]
+                + [
+                    {
+                        "id": current_user.get_id(),
+                        "username": current_user.username,
+                        "numerator": 0,
+                        "denominator": 0,
+                    }
+                ]
+            },
         )
+        return rooms.find_one({"_id": ObjectId(room["_id"])})
     else:
         return None
+
+
+def getRoom(id):
+    return rooms.find_one({"_id": ObjectId(id)})
+
+
+def leaveRoom(room_id, user_id):
+    room = rooms.find_one({"_id": ObjectId(id)})
+    rooms.update(
+        {"_id": ObjectId(id)}, {"members": [x for x in room.members if x.id != user_id]}
+    )
+
+
+def deleteRoom(id):
+    rooms.remove({"_id": ObjectId(id)})
 
 
 # USER STUFF

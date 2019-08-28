@@ -10,17 +10,17 @@
         </div>
         {% endif %}
         <h1>Join a Room</h1>
-        <form method="post" id="login">
+        <form action="/join" method="get" id="login">
             <div>
-                <label for="Room">Room Name:</label>
-                <input type="text" name="Room" id="Room" required>
+                <label for="name">Room Name:</label>
+                <input type="text" name="name" id="name" required>
             </div>
             <div>
                 <input type="submit" value="Join Room">
             </div>
         </form>
         <h1>Create a Room</h1>
-        <form action="/create_room" method="post" id="login">
+        <form action="/room" method="post" id="login">
             <div>
                 <label for="name">Room Name:</label>
                 <input type="text" name="name" id="name" required>
@@ -58,7 +58,7 @@
             success: function (data) {
                 $('#song_id').empty().prop('disabled', false)
                 data.songs.forEach(song => {
-                    $('#song_id').append(`<option value="${song._id}">${song.title}</option>`)
+                    $('#song_id').append(`<option value="${song._id.$oid}">${song.title}</option>`)
                 });
             },
         })

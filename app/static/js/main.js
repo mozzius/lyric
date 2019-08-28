@@ -51,7 +51,7 @@ function play(data, sendCallback = function () { }, winCallback = function () { 
                 var complete = parseInt($('.complete').text()) + 1
                 $('.complete').text(complete.toString())
                 sendCallback(complete, lyrics.length)
-                if (complete === arr.length && $('.popup').classList.contains('hidden')) {
+                if (complete === arr.length && $('.popup')[0].classList.contains('hidden')) {
                     var time = Date.now() - startTime
                     // if the callback exists, then hopefully the win screen will be
                     // created by the server
@@ -65,9 +65,12 @@ function play(data, sendCallback = function () { }, winCallback = function () { 
     })
 }
 
-function playMultiplayer(data, room) {
-    var socket = io();
+function playMultiplayer(data) {
+    var room = new URL(window.location.href).pathname.slice(6)
+    console.log(room)
+    var socket = io('/multiplayer');
     socket.on('connect', function () {
+        console.log('connected')
         socket.emit('join', { data: { room } });
     });
     socket.on('members', function (data) {
@@ -82,16 +85,19 @@ function playMultiplayer(data, room) {
     })
     socket.on('victory', function (data) {
         createPopup(data.time, data.winner)
+        socket.disconnect()
     })
     // play, with a callback to send completed words
     play(data, function (numerator, denominator) {
-        socket.emit('update', { data: { numerator, denominator } })
+        socket.emit('send update', { data: { numerator, denominator, room } })
     }, function (time) {
-        socket.emit('victory', { data: { time } })
+        socket.emit('client won', { data: { time, room } })
+        return true
     })
 }
 
 function createPopup(time, winner = 'You') {
+    console.log('Popup has popped')
     var minutes = Math.floor(time / 60000)
     var seconds = Math.floor(time / 1000) % 60
     $('.popupText').text(`${winner} completed this song in ${minutes}m ${seconds}s`)

@@ -257,6 +257,21 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
     }
 }
 
+.members {
+    width: calc(100% - 20px);
+    padding: 5px 10px;
+    background-color: #ccc;
+
+    .member {
+        margin: 10px;
+        padding: 5px 10px;
+        display: inline-block;
+        background-color: white;
+        border-left: 5px solid black;
+        color: black;
+    }
+}
+
 .songInfo {
     margin: 10px 0;
 
@@ -335,7 +350,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
     margin: 20px 0;
     box-shadow: $shadow;
     border-radius: 8px;
-    height: 80px;
+    height: 60px;
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
@@ -345,7 +360,7 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
     div {
         background-color: red;
         width: 10px;
-        height: 80px;
+        height: 60px;
         margin-right: 20px;
     }
 }
@@ -359,6 +374,9 @@ form {
 
     div {
         margin: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
 
         label {
             display: block;
@@ -376,23 +394,24 @@ form {
             box-sizing: border-box;
         }
 
+        a,
         input[type=submit] {
-            a {
-                background-color: white;
-                border: 1px solid black;
-                color: black;
-                padding: 3px 10px;
-                border-radius: 3px;
-                text-decoration: none;
-                transition-property: color, background-color;
-                transition: 0.3s ease;
-                margin-top: 10px;
-                text-align: center;
+            font-size: 16px;
+            background-color: white;
+            border: 1px solid #7a7a7a;;
+            color: black;
+            padding: 3px 15px;
+            border-radius: 3px;
+            text-decoration: none;
+            transition-property: color, background-color;
+            transition: 0.3s ease;
+            margin-left: 5px;
+            text-align: center;
 
-                &:hover {
-                    background-color: black;
-                    color: white;
-                }
+            &:hover {
+                background-color: black;
+                border-color: black;
+                color: white;
             }
         }
     }
