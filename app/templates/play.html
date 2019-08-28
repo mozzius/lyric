@@ -1,12 +1,15 @@
 {% extends 'default.html' %}
 {% block title %}Play Lyric{% endblock %}
 {% block content %}
+{% if multiplayer %}
+<div class="panel dark">
+    <div class="innerPanel">
+        <div class="members"></div>
+    </div>
+</div>
+{% endif %}
 <div class="panel">
     <div class="innerPanel">
-        {% if multiplayer %}
-        <div class="members">
-        </div>
-        {% endif %}
         <div class="songInfo">
             {% if not hidden %}
             <p class="title"></p>

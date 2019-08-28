@@ -49,7 +49,6 @@
 {% block script %}
 <script>
     $('#collection_id').click(function () {
-        console.log('change')
         var id = $(this).val()
         $.ajax({
             url: '/api/getCollection/' + id,

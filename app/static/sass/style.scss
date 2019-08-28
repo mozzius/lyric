@@ -5,9 +5,8 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
     font-family: 'Open Sans', Helvetica, sans-serif;
 }
 
-.body {
+body {
     margin: 0;
-    overflow-y: scroll;
 }
 
 .nav {
@@ -76,8 +75,13 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
         width: 100%;
         display: flex;
 
+        &.dark {
+            background-color: #ccc;
+        }
+
         .innerPanel {
-            width: 100%;
+            margin: 0 10px;
+            width: calc(100% - 20px);
             max-width: $max-width;
             margin: 0 auto;
         }
@@ -258,9 +262,8 @@ $shadow: 0 2px 5px rgba(0, 0, 0, .3);
 }
 
 .members {
-    width: calc(100% - 20px);
-    padding: 5px 10px;
-    background-color: #ccc;
+    width: 100%;
+    padding: 5px 0;
 
     .member {
         margin: 10px;

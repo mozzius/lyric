@@ -141,9 +141,12 @@ def joinRoom(name):
 def getRoom(id):
     return rooms.find_one({"_id": ObjectId(id)})
 
+def getRoomMembers(id):
+    return getRoom(id)["members"]
 
-def leaveRoom(room_id, user_id):
-    room = rooms.find_one({"_id": ObjectId(id)})
+
+def leaveRoom(user_id):
+    room = rooms.find_one({"members": ObjectId(user_id)})
     rooms.update(
         {"_id": ObjectId(id)}, {"members": [x for x in room.members if x.id != user_id]}
     )

@@ -236,10 +236,9 @@ def connectHandler():
 
 @socketio.on("join")
 def joinHandler(data):
-    print(data)
-    print(current_user.username + "wants to join room "+ data["room"])
+    print(current_user.username + " wants to join room " + data["room"])
     join_room(data["room"])
-    emit("members", {db.getRoomMembers(data["room"])}, broadcast=True, namespace='/multiplayer')
+    emit("members", {"members": db.getRoomMembers(data["room"])}, broadcast=True)
 
 
 @socketio.on("send update")
@@ -247,14 +246,13 @@ def updateHandler(data):
     emit(
         "update",
         {
-            "_id": current_user.get_id(),
+            "id": current_user.get_id(),
             "username": current_user.username,
             "numerator": data["numerator"],
             "denominator": data["denominator"],
         },
         room=data["room"],
         broadcast=True,
-        namespace='/multiplayer',
     )
 
 
@@ -262,19 +260,19 @@ def updateHandler(data):
 def victoryHandler(data):
     emit(
         "victory",
-        {"winner": current_user.username, "time": data.time},
+        {"winner": current_user.username, "time": data["time"]},
         room=data["room"],
         broadcast=True,
-        namespace='/multiplayer',
     )
-    close_room()
+    close_room(data["room"])
+    db.deleteRoom(data["room"])
 
 
 @socketio.on("disconnect")
 def disconnectHandler(data):
     leave_room()
     try:
-        db.leaveRoom(data["room"])
+        db.leaveRoom()
     except Exception as e:
         print(e)
 
