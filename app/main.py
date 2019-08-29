@@ -183,8 +183,12 @@ def roomMenu():
         room = None
         try:
             room = request.form.get("name")
-            song_id = request.form.get("song_id")
-            return redirect("/room/" + str(db.createRoom(room, song_id)))
+            if request.form.get("random"):
+                songs = db.getSongsFromCollectionID(request.form.get("collection_id"))
+                song_id = random.choice(songs)["_id"]
+            else:
+                song_id = request.form.get("song_id")
+            return redirect("/room/" + str(db.createRoom(room, song_id, request.form.get("random"))))
         except Exception as e:
             print(e)
             return render_template(
@@ -200,13 +204,15 @@ def roomMenu():
 @login_required
 def playRoom(room_id):
     room = db.getRoom(room_id)
-    if room == None or current_user.get_id() not in [x["id"] for x in room["members"]]:
+    if room == None:
         collections = db.getCollectionList()
         return render_template(
-            "room.html", collections=collections, error=("Error joining room :(")
+            "room.html", collections=collections, error="Error joining room :("
         )
+    elif current_user.get_id() not in [x["id"] for x in room["members"]]:
+        room = db.joinRoom(room["name"])
     return render_template(
-        "play.html", multiplayer=True, song_id=room["song_id"], room=str(room["_id"])
+        "play.html", multiplayer=True, hidden=room["random"], song_id=room["song_id"], room=str(room["_id"])
     )
 
 

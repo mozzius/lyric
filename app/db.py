@@ -25,7 +25,7 @@ def getSongFromID(id):
 
 
 def getSongsFromCollectionID(collection_id):
-    return list(songs.find({"collection_id": collection_id}))
+    return list(songs.find({"collection_id": ObjectId(collection_id)}))
 
 
 def getSongList():
@@ -95,13 +95,15 @@ def addCollection(collection):
 # MULTIPLAYER STUFF
 
 
-def createRoom(name, song_id):
+def createRoom(name, song_id, random):
     assert name
     assert song_id
     assert rooms.find({"name": name}).count() == 0
     room = {
         "name": name,
-        "song_id": song_id,
+        "date_created": datetime.datetime.now(),
+        "random": random,
+        "song_id": ObjectId(song_id),
         "members": [
             {
                 "id": current_user.get_id(),

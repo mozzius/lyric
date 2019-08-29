@@ -34,9 +34,12 @@
                 </select>
             </div>
             <div>
+                <span><input type="checkbox" name="random" id="random"><label for="random">Random song</label></span>
+            </div>
+            <div id="song">
                 <label for="song_id">Song:</label>
                 <select name="song_id" id="song_id" disabled required>
-                    <option selected>Select a Collection</option>
+                    <option selected>Select a Collection first</option>
                 </select>
             </div>
             <div>
@@ -48,6 +51,13 @@
 {% endblock %}
 {% block script %}
 <script>
+    function toggleSong() {
+        $('#song').toggle(!$('#random').is(':checked'));
+    }
+
+    toggleSong()
+    $('#random').click(toggleSong)
+
     $('#collection_id').click(function () {
         var id = $(this).val()
         $.ajax({
