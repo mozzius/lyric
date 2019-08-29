@@ -101,7 +101,7 @@ def createRoom(name, song_id, random):
     assert rooms.find({"name": name}).count() == 0
     room = {
         "name": name,
-        "date_created": datetime.datetime.now(),
+        "date": datetime.datetime.utcnow(),
         "random": random,
         "song_id": ObjectId(song_id),
         "members": [
