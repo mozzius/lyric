@@ -128,6 +128,7 @@ def joinRoom(name):
             {
                 "name": room["name"],
                 "song_id": room["song_id"],
+                "random": room["random"],
                 "members": room["members"]
                 + [
                     {
@@ -142,6 +143,29 @@ def joinRoom(name):
         return rooms.find_one({"_id": ObjectId(room["_id"])})
     else:
         return None
+
+
+def updateRoomMemberScores(user_id, room_id, data):
+    room = rooms.find_one({"_id": ObjectId(room_id)})
+    rooms.update(
+        {"_id": room["_id"]},
+        {
+            "name": room["name"],
+            "song_id": room["song_id"],
+            "random": room["random"],
+            # removes the user and adds back in again
+            # not the best way but it works I guess
+            "members": [x for x in room["members"] if x["id"] != user_id]
+            + [
+                {
+                    "id": user_id,
+                    "username": current_user.username,
+                    "numerator": data["numerator"],
+                    "denominator": data["denominator"],
+                }
+            ],
+        },
+    )
 
 
 def getRoom(id):
@@ -159,6 +183,7 @@ def leaveRoom(user_id):
         {
             "name": room["name"],
             "song_id": room["song_id"],
+            "random": room["random"],
             "members": [x for x in room["members"] if x["id"] != user_id],
         },
     )

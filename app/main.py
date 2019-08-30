@@ -254,6 +254,7 @@ def joinHandler(data):
 
 @socketio.on("send update", namespace="/multiplayer")
 def updateHandler(data):
+    db.updateRoomMemberScores(current_user.get_id(), data["room"], data)
     emit(
         "update",
         {
