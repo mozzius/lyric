@@ -71,7 +71,6 @@ def login():
     if request.method == "POST":
         form = request.form
         user_id = db.verifyUser(form["email"], form["password"])
-        print(user_id)
         if user_id != None:
             user = db.getUser(user_id)
             login_user(User(user))
@@ -118,14 +117,14 @@ def home():
 
 @app.route("/play/<song_id>")
 def play(song_id):
-    return render_template("play.html", song_id=song_id)
+    return render_template("play.html", song_id=song_id, multiplayer=False)
 
 
 @app.route("/random/<collection_id>")
 def playRandom(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
     song_id = random.choice(collection["songs"])["_id"]
-    return render_template("play.html", song_id=song_id, hidden=True)
+    return render_template("play.html", song_id=song_id, hidden=True, multiplayer=False)
 
 
 @app.route("/collection/<collection>")
@@ -183,12 +182,13 @@ def roomMenu():
         room = None
         try:
             room = request.form.get("name")
-            if request.form.get("random"):
+            rand = request.form.get("random") == "on"
+            if rand:
                 songs = db.getSongsFromCollectionID(request.form.get("collection_id"))
                 song_id = random.choice(songs)["_id"]
             else:
                 song_id = request.form.get("song_id")
-            return redirect("/room/" + str(db.createRoom(room, song_id, request.form.get("random"))))
+            return redirect("/room/" + str(db.createRoom(room, song_id, rand)))
         except Exception as e:
             print(e)
             return render_template(
@@ -211,8 +211,13 @@ def playRoom(room_id):
         )
     elif current_user.get_id() not in [x["id"] for x in room["members"]]:
         room = db.joinRoom(room["name"])
+    random = room["random"]
     return render_template(
-        "play.html", multiplayer=True, hidden=room["random"], song_id=room["song_id"], room=str(room["_id"])
+        "play.html",
+        multiplayer=True,
+        hidden=random,
+        song_id=room["song_id"],
+        room=str(room["_id"]),
     )
 
 
@@ -246,19 +251,35 @@ def joinHandler(data):
     join_room(data["room"])
     emit(
         "members",
-        {"members": db.getRoomMembers(data["room"])},
+        {
+            "members": db.getRoomMembers(data["room"]),
+            "started": db.isStarted(data["room"]),
+            "user_id": str(db.getRoom(data["room"])["user_id"]),
+        },
         broadcast=True,
         namespace="/multiplayer",
     )
 
 
-@socketio.on("send update", namespace="/multiplayer")
+@socketio.on("please start", namespace="/multiplayer")
+def pleaseStart(data):
+    if db.startRoom(data["room"]):
+        emit(
+            "start",
+            {"started": db.isStarted(data["room"])},
+            broadcast=True,
+            namespace="/multiplayer",
+        )
+
+
+@socketio.on("word found", namespace="/multiplayer")
 def updateHandler(data):
     db.updateRoomMemberScores(current_user.get_id(), data["room"], data)
     emit(
         "update",
         {
             "id": current_user.get_id(),
+            "started": db.isStarted(data["room"]),
             "username": current_user.username,
             "numerator": data["numerator"],
             "denominator": data["denominator"],
@@ -273,7 +294,11 @@ def updateHandler(data):
 def victoryHandler(data):
     emit(
         "victory",
-        {"winner": current_user.username, "time": data["time"]},
+        {
+            "winner": current_user.username,
+            "time": data["time"],
+            "members": db.getRoomMembers(data["room"]),
+        },
         room=data["room"],
         broadcast=True,
         namespace="/multiplayer",
@@ -286,7 +311,18 @@ def victoryHandler(data):
 def disconnectHandler():
     print("{} has left".format(current_user.username))
     try:
-        leave_room(str(db.leaveRoom(current_user.get_id())["_id"]))
+        room_id = str(db.leaveRoom(current_user.get_id())["_id"])
+        leave_room(room_id)
+        emit(
+            "members",
+            {
+                "members": db.getRoomMembers(room_id),
+                "started": db.isStarted(room_id),
+                "user_id": str(db.getRoom(room_id)["user_id"]),
+            },
+            broadcast=True,
+            namespace="/multiplayer",
+        )
     except Exception as e:
         print(e)
 

@@ -102,8 +102,10 @@ def createRoom(name, song_id, random):
     room = {
         "name": name,
         "date": datetime.datetime.utcnow(),
+        "started": False,
         "random": random,
         "song_id": ObjectId(song_id),
+        "user_id": ObjectId(current_user.get_id()),
         "members": [
             {
                 "id": current_user.get_id(),
@@ -128,6 +130,9 @@ def joinRoom(name):
             {
                 "name": room["name"],
                 "song_id": room["song_id"],
+                "user_id": room["user_id"],
+                "date": room["date"],
+                "started": room["started"],
                 "random": room["random"],
                 "members": room["members"]
                 + [
@@ -145,6 +150,29 @@ def joinRoom(name):
         return None
 
 
+def startRoom(room_id):
+    room = rooms.find_one({"_id": ObjectId(room_id)})
+    if room["user_id"] == ObjectId(current_user.get_id()):
+        rooms.update(
+            {"_id": room["_id"]},
+            {
+                "name": room["name"],
+                "song_id": room["song_id"],
+                "random": room["random"],
+                "user_id": room["user_id"],
+                "date": room["date"],
+                "started": True,
+                "members": room["members"]
+            },
+        )
+        return True
+    else:
+        return False
+
+def isStarted(room_id):
+    return rooms.find_one({"_id": ObjectId(room_id)})["started"]
+
+
 def updateRoomMemberScores(user_id, room_id, data):
     room = rooms.find_one({"_id": ObjectId(room_id)})
     rooms.update(
@@ -153,6 +181,9 @@ def updateRoomMemberScores(user_id, room_id, data):
             "name": room["name"],
             "song_id": room["song_id"],
             "random": room["random"],
+            "user_id": room["user_id"],
+            "date": room["date"],
+            "started": room["started"],
             # removes the user and adds back in again
             # not the best way but it works I guess
             "members": [x for x in room["members"] if x["id"] != user_id]
@@ -173,7 +204,7 @@ def getRoom(id):
 
 
 def getRoomMembers(id):
-    return getRoom(id)["members"]
+    return getRoom(ObjectId(id))["members"]
 
 
 def leaveRoom(user_id):
@@ -184,6 +215,9 @@ def leaveRoom(user_id):
             "name": room["name"],
             "song_id": room["song_id"],
             "random": room["random"],
+            "date": room["date"],
+            "started": room["started"],
+            "user_id": room["user_id"],
             "members": [x for x in room["members"] if x["id"] != user_id],
         },
     )

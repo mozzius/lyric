@@ -59,6 +59,7 @@ body {
                 text-decoration: none;
                 transition-property: color, background-color;
                 transition: 0.3s ease;
+                cursor: pointer;
 
                 &:hover {
                     background-color: black;
@@ -96,7 +97,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     z-index: 100;
@@ -117,8 +118,13 @@ body {
         flex-direction: column;
 
         h1,
-        .popupText {
+        p {
             text-align: center;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 0;
         }
 
         .buttonGroup {
@@ -273,6 +279,14 @@ body {
         background-color: white;
         border-left: 5px solid black;
         color: black;
+    }
+
+    &.dark {
+        text-align: center;
+        
+        .member {
+            background-color: #eee;
+        }
     }
 }
 

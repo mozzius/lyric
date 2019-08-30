@@ -36,32 +36,13 @@
 </div>
 {% endblock %}
 {% block script %}
-{% if multiplayer %}
 <script>
+    const id = '{{ current_user.get_id() }}'
     // song_id, multiplayer
-    getSong('{{ song_id }}', true);
+    getSong('{{ song_id }}', {{ multiplayer|string|lower }}, {{ hidden|string|lower }});
 </script>
-{% else %}
-<script>
-    // song_id, multiplayer
-    getSong('{{ song_id }}', false);
-</script>
-{% endif %}
 {% endblock %}
 {% block popup %}
 <div class="popup hidden">
-    <div class="box">
-        <h1>Song Complete!</h1>
-        <p class="popupText"></p>
-        <div class="buttonGroup">
-            {% if multiplayer %}
-            <a href="/room" class="dark">Back to Rooms</a>
-            {% else %}
-            <a href="/play/{{ song_id }}" class="dark">Play Again</a>
-            <a href="" id="back"></a>
-            <a href="" id="random"></a>
-            {% endif %}
-        </div>
-    </div>
 </div>
 {% endblock %}
