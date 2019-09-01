@@ -12,11 +12,16 @@
             {% for collection in collections %}
             <div class="collection">
                 <div class="main">
-                    <div>
+                    <div class="text">
                         <p class="title">{{ collection.title }}</p>
-                        {% if collection.songs %}
-                        <a href="/random/{{ collection._id }}" class="random">Random Song</a>
-                        {% endif %}
+                        <div>
+                            {% if collection.songs %}
+                            <a href="/random/{{ collection._id }}" class="random">Random Song</a>
+                            {% endif %}
+                            {% if collection.user_id == current_user.get_id() %}
+                            <a href="/edit/collection/{{ collection._id }}" class="edit">Edit</a>
+                            {% endif %}
+                        </div>
                     </div>
                     {% if collection.image %}
                     <img src="{{ collection.image }}" alt="{{ collection.title }}">

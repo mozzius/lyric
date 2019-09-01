@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 from flask_login import (
     LoginManager,
     login_user,
@@ -131,6 +131,45 @@ def playRandom(collection_id):
 def viewCollection(collection):
     collection = db.getCollectionWithSongsFromID(collection)
     return render_template("collection.html", collection=collection)
+
+
+@app.route("/edit/collection/<collection_id>", methods=["GET", "POST"])
+@login_required
+def editCollection(collection_id):
+    collection = db.getCollectionWithSongsFromID(collection_id)
+    if str(collection["user_id"]) == current_user.get_id():
+        if request.method == "POST":
+            try:
+                title = request.form["title"]
+                image = request.form["image"]
+                db.editCollection(collection_id, title, image)
+            except Exception as e:
+                print(e)
+                return render_template(
+                    "editCollection.html", collection=collection, error=True
+                )
+        collection = db.getCollectionWithSongsFromID(collection_id)
+        return render_template("editCollection.html", collection=collection)
+    else:
+        return abort(403)
+
+
+@app.route("/edit/song/<song_id>", methods=["GET", "POST"])
+@login_required
+def editSong(song_id):
+    song, collection = [db.getSongFromID(song_id)[k] for k in ("song", "collection")]
+    if str(collection["user_id"]) == current_user.get_id():
+        if request.method == "POST":
+            try:
+                title = request.form["title"]
+                lyrics = request.form["lyrics"]
+                db.editSong(song_id, title, lyrics)
+            except Exception as e:
+                print(e)
+                return render_template("editSong.html", song=song, error=True)
+        song = db.getSongFromID(song_id)["song"]
+        return render_template("editSong.html", song=song)
+    return abort(403)
 
 
 @app.route("/add/song", methods=["GET", "POST"])

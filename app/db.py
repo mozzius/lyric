@@ -45,6 +45,7 @@ def getCollectionWithSongsFromID(id):
     return {
         "_id": collection["_id"],
         "user_name": getUser(collection["user_id"])["username"],
+        "user_id": str(collection["user_id"]),
         "title": collection["title"],
         "image": collection["image"],
         "songs": getSongsFromCollectionID(collection["_id"]),
@@ -58,6 +59,7 @@ def getCollectionsWithSongs():
             {
                 "_id": collection["_id"],
                 "user_name": getUser(collection["user_id"])["username"],
+                "user_id": str(collection["user_id"]),
                 "title": collection["title"],
                 "image": collection["image"],
                 "songs": getSongsFromCollectionID(collection["_id"]),
@@ -85,11 +87,26 @@ def addSong(song):
 
 def addCollection(collection):
     assert collection["title"]
-    assert collection["image"]
     assert collection["user_id"]
     assert collections.find({"title": collection["title"]}).count() == 0
     collection["date"] = datetime.datetime.utcnow()
     return collections.insert_one(collection).inserted_id
+
+
+def editSong(id, title, lyrics):
+    assert title
+    assert lyrics
+    song = getSongFromID(id)["song"]
+    song["title"] = title
+    song["lyrics"] = lyrics
+    songs.update({"_id": song["_id"]}, song)
+
+def editCollection(id, title, image):
+    assert title
+    collection = getCollectionFromID(id)
+    collection["title"] = title
+    collection["image"] = image
+    collections.update({"_id": collection["_id"]}, collection)
 
 
 # MULTIPLAYER STUFF
@@ -162,12 +179,13 @@ def startRoom(room_id):
                 "user_id": room["user_id"],
                 "date": room["date"],
                 "started": True,
-                "members": room["members"]
+                "members": room["members"],
             },
         )
         return True
     else:
         return False
+
 
 def isStarted(room_id):
     return rooms.find_one({"_id": ObjectId(room_id)})["started"]
