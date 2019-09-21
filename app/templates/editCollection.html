@@ -20,19 +20,47 @@
                 <input type="text" name="image" id="image" value="{{ collection.image }}" required>
             </div>
             <div>
-                <input type="submit" value="Submit">
+                <input type="submit" value="Save">
             </div>
         </form>
         <div class="collections">
             <div class="collection expanded">
-                <p>Please note you may lose any changes in the above form if you click on a song</p>
+                <div class="tinyHeader">
+                    <p>Drag to reorder songs</p>
+                    <a href="/add/song">Add a Song</a>
+                </div>
                 <div class="songs">
                     {% for song in collection.songs %}
-                    <a href="/edit/song/{{ song._id }}">Edit '{{ song.title }}'</a>
+                    <a href="/edit/song/{{ song._id }}" id="{{ song._id }}">Edit '{{ song.title }}'</a>
                     {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    $('.songs').sortable({
+        animation: 150,
+        easing: "ease",
+        onEnd: function (evt) {
+            var songs = []
+            $('.songs').children().each(function () {
+                songs.push(this.id)
+            })
+            console.log(songs)
+            $.ajax({
+                type: 'POST',
+                url: '/api/reorder',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify({ songs }),
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data.data)
+                },
+            })
+        }
+    })
+</script>
 {% endblock %}

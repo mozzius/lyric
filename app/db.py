@@ -25,7 +25,9 @@ def getSongFromID(id):
 
 
 def getSongsFromCollectionID(collection_id):
-    return list(songs.find({"collection_id": ObjectId(collection_id)}))
+    return list(
+        songs.find({"collection_id": ObjectId(collection_id)}).sort([("index", 1)])
+    )
 
 
 def getSongList():
@@ -82,6 +84,16 @@ def addSong(song):
     song["collection_id"] = ObjectId(song["collection_id"])
     song["lyrics"] = song["lyrics"].replace("\n", " ")
     song["date"] = datetime.datetime.utcnow()
+    lastSong = (
+        songs.find({"collection_id": song["collection_id"]})
+        .sort([("index", -1)])
+        .limit(1)
+    )[0]
+    if lastSong:
+        index = lastSong["index"] + 1
+    else:
+        index = 0
+    song["index"] = index
     return songs.insert_one(song).inserted_id
 
 
@@ -101,12 +113,18 @@ def editSong(id, title, lyrics):
     song["lyrics"] = lyrics
     songs.update({"_id": song["_id"]}, song)
 
+
 def editCollection(id, title, image):
     assert title
     collection = getCollectionFromID(id)
     collection["title"] = title
     collection["image"] = image
     collections.update({"_id": collection["_id"]}, collection)
+
+
+def reorderSongs(songList):
+    for i in range(len(songList)):
+        songs.update({"_id": ObjectId(songList[i])}, {"$set": {"index": i}})
 
 
 # MULTIPLAYER STUFF
@@ -145,21 +163,17 @@ def joinRoom(name):
         rooms.update(
             {"_id": room["_id"]},
             {
-                "name": room["name"],
-                "song_id": room["song_id"],
-                "user_id": room["user_id"],
-                "date": room["date"],
-                "started": room["started"],
-                "random": room["random"],
-                "members": room["members"]
-                + [
-                    {
-                        "id": current_user.get_id(),
-                        "username": current_user.username,
-                        "numerator": 0,
-                        "denominator": 0,
-                    }
-                ],
+                "$set": {
+                    "members": room["members"]
+                    + [
+                        {
+                            "id": current_user.get_id(),
+                            "username": current_user.username,
+                            "numerator": 0,
+                            "denominator": 0,
+                        }
+                    ]
+                }
             },
         )
         return rooms.find_one({"_id": ObjectId(room["_id"])})
@@ -170,18 +184,7 @@ def joinRoom(name):
 def startRoom(room_id):
     room = rooms.find_one({"_id": ObjectId(room_id)})
     if room["user_id"] == ObjectId(current_user.get_id()):
-        rooms.update(
-            {"_id": room["_id"]},
-            {
-                "name": room["name"],
-                "song_id": room["song_id"],
-                "random": room["random"],
-                "user_id": room["user_id"],
-                "date": room["date"],
-                "started": True,
-                "members": room["members"],
-            },
-        )
+        rooms.update({"_id": room["_id"]}, {"$set": {"started": True}})
         return True
     else:
         return False
@@ -196,23 +199,19 @@ def updateRoomMemberScores(user_id, room_id, data):
     rooms.update(
         {"_id": room["_id"]},
         {
-            "name": room["name"],
-            "song_id": room["song_id"],
-            "random": room["random"],
-            "user_id": room["user_id"],
-            "date": room["date"],
-            "started": room["started"],
-            # removes the user and adds back in again
-            # not the best way but it works I guess
-            "members": [x for x in room["members"] if x["id"] != user_id]
-            + [
-                {
-                    "id": user_id,
-                    "username": current_user.username,
-                    "numerator": data["numerator"],
-                    "denominator": data["denominator"],
-                }
-            ],
+            "$set": {
+                # removes the user and adds back in again
+                # not the best way but it works I guess
+                "members": [x for x in room["members"] if x["id"] != user_id]
+                + [
+                    {
+                        "id": user_id,
+                        "username": current_user.username,
+                        "numerator": data["numerator"],
+                        "denominator": data["denominator"],
+                    }
+                ]
+            }
         },
     )
 
@@ -229,15 +228,7 @@ def leaveRoom(user_id):
     room = rooms.find_one({"members.id": user_id})
     rooms.update(
         {"_id": room["_id"]},
-        {
-            "name": room["name"],
-            "song_id": room["song_id"],
-            "random": room["random"],
-            "date": room["date"],
-            "started": room["started"],
-            "user_id": room["user_id"],
-            "members": [x for x in room["members"] if x["id"] != user_id],
-        },
+        {"$set": {"members": [x for x in room["members"] if x["id"] != user_id]}},
     )
     return rooms.find_one({"_id": room["_id"]})
 
@@ -256,9 +247,7 @@ def sha256(msg):
 def addUser(name, email, password):
     # cleaning inputs
     name = bleach.clean(name)
-    match = re.match(
-        "^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$", email
-    )
+    match = re.match(r"\"?([-a-zA-Z0-9.`?{}]+@\w+\.\w+)\"?", email)
     password = sha256(password)
     try:
         assert match

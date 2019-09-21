@@ -184,7 +184,8 @@ def addSong():
                 "lyrics": request.form["lyrics"],
                 "user_id": ObjectId(current_user.get_id()),
             }
-            return redirect("/play/" + str(db.addSong(song)))
+            db.addSong(song)
+            return redirect("/edit/collection/" + request.form["collection_id"])
         except Exception as e:
             print(e)
             return render_template("addSong.html", collections=collections, error=True)
@@ -202,7 +203,7 @@ def addCollection():
                 "image": request.form["image"],
                 "user_id": ObjectId(current_user.get_id()),
             }
-            return redirect("/collection/" + str(db.addCollection(collection)))
+            return redirect("/edit/collection/" + str(db.addCollection(collection)))
         except Exception as e:
             print(e)
             return render_template("addCollection.html", error=True)
@@ -379,6 +380,14 @@ def getSong(song_id):
 def getCollection(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
     return json_util.dumps(collection)
+
+
+@login_required
+@app.route("/api/reorder", methods=["POST"])
+def reorder():
+    songs = request.json["songs"]
+    db.reorderSongs(songs)
+    return json_util.dumps({"data": "thank"})
 
 
 if __name__ == "__main__":
