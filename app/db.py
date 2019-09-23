@@ -88,9 +88,9 @@ def addSong(song):
         songs.find({"collection_id": song["collection_id"]})
         .sort([("index", -1)])
         .limit(1)
-    )[0]
-    if lastSong:
-        index = lastSong["index"] + 1
+    )
+    if lastSong.count() == 1:
+        index = lastSong.next()["index"] + 1
     else:
         index = 0
     song["index"] = index
