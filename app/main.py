@@ -149,7 +149,6 @@ def viewCollection(collection):
 @login_required
 def editCollection(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
-    print(collection)
     if str(collection["user_id"]) == current_user.get_id():
         if request.method == "POST":
             try:
@@ -197,7 +196,11 @@ def editSong(song_id):
 @app.route("/add/song", methods=["GET", "POST"])
 @login_required
 def addSong():
-    collections = db.getCollectionList()
+    collections = (
+        collection
+        for collection in db.getCollectionList()
+        if str(collection["user_id"]) == current_user.get_id()
+    )
     c = request.args.get("c")
     if request.method == "POST":
         try:

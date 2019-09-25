@@ -125,5 +125,5 @@ dmypy.json
 *.map
 
 # uh me stuff I guess
-static/images/
-static/thumbnails/
+static/images
+static/thumbnails

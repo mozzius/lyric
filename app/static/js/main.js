@@ -19,12 +19,18 @@ function play(data, rand, sendCallback, winCallback) {
     const collection_title = data.collection.title
 
     var lyrics = data.song.lyrics.split(' ').map(function (word) {
-        return {
-            simple: word.toLowerCase().replace(/[^\w]|_/g, ''),
-            display: word,
-            discovered: false,
+        let simple = word.normalize("NFD").toLowerCase().replace(/[^\w]|_/g, '')
+        if (simple !== '') {
+            return {
+                simple,
+                display: word,
+                discovered: false,
+            }
+        } else {
+            return false
         }
     })
+    lyrics.filter(Boolean)
 
     $('.total').text(lyrics.length)
     $('.complete').text(0)
@@ -40,7 +46,8 @@ function play(data, rand, sendCallback, winCallback) {
     }
 
     $('#enter').keyup(function () {
-        var word = $('#enter').val().toLowerCase().replace(/[^\w]|_/g, '')
+        // normalize splits graphmemes into simple characters, effectively latinizing the string
+        var word = $('#enter').val().normalize("NFD").toLowerCase().replace(/[^\w]|_/g, '')
         lyrics.forEach(function (lyric, index, arr) {
             if (lyric.simple === word && lyric.discovered === false) {
                 $('#enter').val('')
