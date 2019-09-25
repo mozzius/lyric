@@ -19,7 +19,7 @@
                 <label for="collection_id">Collection:</label>
                 <select name="collection_id" id="collection_id" required>
                     {% for collection in collections %}
-                    <option value="{{ collection._id }}">{{ collection.title }}</option>
+                    <option value="{{ collection._id }}" {% if c|string() == collection._id|string() %}selected{% endif %}>{{ collection.title }}</option>
                     {% endfor %}
                 </select>
                 <a href="/add/collection">Create a new collection instead</a>

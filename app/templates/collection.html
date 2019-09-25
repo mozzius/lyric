@@ -4,27 +4,32 @@
 <div class="panel">
     <div class="innerPanel">
         <div class="collections">
-            <div class="collection expanded">
+            <div class="collection">
                 <div class="main">
                     <div class="text">
-                        <p class="title">{{ collection.title }}</p>
-                        <div>
-                            {% if collection.songs %}
-                            <a href="/random/{{ collection._id }}" class="random">Random Song</a>
-                            {% endif %}
-                            {% if collection.user_id == current_user.get_id() %}
-                            <a href="/edit/collection/{{ collection._id }}" class="edit">Edit</a>
-                            {% endif %}
-                        </div>
+                        <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
+                        <p class="date">Created on {{ collection.date.strftime('%d/%m/%Y') }} by {{ collection.user_name }}</p>
                     </div>
                     {% if collection.image %}
-                    <img src="{{ collection.image }}" alt="{{ collection.title }}">
+                    <img src="/static/thumbnails/{{ collection.image }}.png" alt="{{ collection.title }}">
                     {% endif %}
                 </div>
-                <div class="songs">
-                    {% for song in collection.songs %}
-                    <a href="/play/{{ song._id }}">{{ song.title }}</a>
-                    {% endfor %}
+            </div>
+            <div class="collections">
+                <div class="collection expanded">
+                    <div class="tinyHeader">
+                        {% if collection.songs %}
+                        <a href="/random/{{ collection._id }}" class="random">Random Song</a>
+                        {% endif %}
+                        {% if collection.user_id == current_user.get_id() %}
+                        <a href="/edit/collection/{{ collection._id }}" class="edit">Edit</a>
+                        {% endif %}
+                    </div>
+                    <div class="songs">
+                        {% for song in collection.songs %}
+                        <a href="/play/{{ song._id }}" id="{{ song._id }}">{{ song.title }}</a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>

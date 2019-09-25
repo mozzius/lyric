@@ -10,15 +10,28 @@ from flask_socketio import SocketIO, emit, disconnect, join_room, close_room, le
 from sassutils.wsgi import SassMiddleware
 from bson import json_util, ObjectId
 import random
+import os
 
 try:
     import db
+    import img
 except ImportError:
     import app.db as db
+    import app.img as img
 
 app = Flask(__name__)
 socketio = SocketIO(app)
 login = LoginManager(app)
+
+IMAGE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "images")
+THUMBNAIL_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "static", "thumbnails"
+)
+if not os.path.isdir(IMAGE_DIR):
+    os.mkdir(IMAGE_DIR)
+if not os.path.isdir(THUMBNAIL_DIR):
+    os.mkdir(THUMBNAIL_DIR)
+
 
 # USER STUFF
 
@@ -137,12 +150,22 @@ def viewCollection(collection):
 @login_required
 def editCollection(collection_id):
     collection = db.getCollectionWithSongsFromID(collection_id)
+    print(collection)
     if str(collection["user_id"]) == current_user.get_id():
         if request.method == "POST":
             try:
                 title = request.form["title"]
-                image = request.form["image"]
-                db.editCollection(collection_id, title, image)
+                image = request.files.get("image")
+                if image and image.filename != "":
+                    ext = image.filename.split(".")[1].lower()
+                    assert ext in ["png", "jpg", "jpeg"]
+                    image_name = str(db.addImage(ext))
+                    image.save(IMAGE_DIR + "/" + image_name + "." + ext)
+                    # save thumbnails
+                    img.thubnailify(image_name, ext, IMAGE_DIR, THUMBNAIL_DIR)
+                else:
+                    image_name = collection.image
+                db.editCollection(collection_id, title, image_name)
             except Exception as e:
                 print(e)
                 return render_template(
@@ -176,6 +199,7 @@ def editSong(song_id):
 @login_required
 def addSong():
     collections = db.getCollectionList()
+    c = request.args.get("c")
     if request.method == "POST":
         try:
             song = {
@@ -188,9 +212,11 @@ def addSong():
             return redirect("/edit/collection/" + request.form["collection_id"])
         except Exception as e:
             print(e)
-            return render_template("addSong.html", collections=collections, error=True)
+            return render_template(
+                "addSong.html", collections=collections, c=c, error=True
+            )
     else:
-        return render_template("addSong.html", collections=collections)
+        return render_template("addSong.html", collections=collections, c=c)
 
 
 @app.route("/add/collection", methods=["GET", "POST"])
@@ -198,9 +224,16 @@ def addSong():
 def addCollection():
     if request.method == "POST":
         try:
+            image = request.files["image"]
+            ext = image.filename.split(".")[1].lower()
+            assert ext in ["png", "jpg", "jpeg"]
+            image_name = str(db.addImage(ext))
+            image.save(IMAGE_DIR + "/" + image_name + "." + ext)
+            # save thumbnails
+            img.thubnailify(image_name, ext, IMAGE_DIR, THUMBNAIL_DIR)
             collection = {
-                "title": request.form["title"],
-                "image": request.form["image"],
+                "title": request.form.get("title"),
+                "image": image_name,
                 "user_id": ObjectId(current_user.get_id()),
             }
             return redirect("/edit/collection/" + str(db.addCollection(collection)))

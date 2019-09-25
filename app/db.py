@@ -17,6 +17,7 @@ songs = db.songs
 collections = db.collections
 users = db.users
 rooms = db.rooms
+images = db.images
 
 
 def getSongFromID(id):
@@ -51,6 +52,7 @@ def getCollectionWithSongsFromID(id):
         "title": collection["title"],
         "image": collection["image"],
         "songs": getSongsFromCollectionID(collection["_id"]),
+        "date": collection["date"],
     }
 
 
@@ -89,12 +91,16 @@ def addSong(song):
         .sort([("index", -1)])
         .limit(1)
     )
-    if lastSong.count() == 1:
-        index = lastSong.next()["index"] + 1
+    if lastSong.count() != 1:
+        index = lastSong[0]["index"] + 1
     else:
         index = 0
     song["index"] = index
     return songs.insert_one(song).inserted_id
+
+
+def addImage(ext):
+    return images.insert_one({"ext": ext}).inserted_id
 
 
 def addCollection(collection):
@@ -118,7 +124,7 @@ def editCollection(id, title, image):
     assert title
     collection = getCollectionFromID(id)
     collection["title"] = title
-    collection["image"] = image
+    collection["image"] = ObjectId(image)
     collections.update({"_id": collection["_id"]}, collection)
 
 

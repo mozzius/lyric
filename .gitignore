@@ -123,3 +123,7 @@ dmypy.json
 .pyre/
 *.css
 *.map
+
+# uh me stuff I guess
+static/images/
+static/thumbnails/
