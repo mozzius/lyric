@@ -7,7 +7,7 @@
             <div class="collection">
                 <div class="main">
                     <div class="text">
-                        <a href="/collection/{{ collection._id }}" class="title">{{ collection.title }}</a>
+                        <p class="title">{{ collection.title }}</p>
                         <p class="date">Created on {{ collection.date.strftime('%d/%m/%Y') }} by {{ collection.user_name }}</p>
                     </div>
                     {% if collection.image %}
