@@ -110,7 +110,6 @@ def signup():
             else:
                 return render_template("signup.html", error=True)
         else:
-            print("password not repeated correctly")
             return render_template("signup.html", error=True)
     else:
         if current_user.is_authenticated:

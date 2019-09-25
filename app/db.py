@@ -91,7 +91,7 @@ def addSong(song):
         .sort([("index", -1)])
         .limit(1)
     )
-    if lastSong.count() != 1:
+    if lastSong.count() > 0:
         index = lastSong[0]["index"] + 1
     else:
         index = 0
