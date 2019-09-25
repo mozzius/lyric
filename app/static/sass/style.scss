@@ -385,11 +385,12 @@ body {
     padding: 10px;
     top: 60px;
     background-color: white;
+    overflow: hidden;
 
     input {
         padding: 10px;
         font-size: 1.1em;
-        width: calc(100% - 200px);
+        width: calc(100% - 190px);
         max-width: 350px;
         border: 1px solid black;
         border-radius: 3px;
