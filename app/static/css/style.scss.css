@@ -1,0 +1,377 @@
+* {
+  font-family: 'Abel', Helvetica, sans-serif; }
+
+body {
+  margin: 0; }
+
+.nav {
+  position: fixed;
+  width: 100%;
+  height: 60px;
+  display: flex;
+  top: 0;
+  left: 0;
+  background-color: white;
+  z-index: 10; }
+  .nav .inner {
+    width: 100%;
+    max-width: 1000px;
+    height: 60px;
+    margin: 0 auto;
+    padding: 0 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; }
+    .nav .inner .logo {
+      background-color: black;
+      border: 1px solid black;
+      color: white;
+      padding: 3px 10px;
+      margin: 0 10px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition-property: padding, margin;
+      transition: 0.3s ease; }
+      .nav .inner .logo:hover {
+        margin: 0;
+        padding: 3px 20px; }
+    .nav .inner .buttonGroup {
+      margin: 0 10px; }
+      .nav .inner .buttonGroup a {
+        background-color: white;
+        border: 1px solid black;
+        color: black;
+        padding: 3px 10px;
+        border-radius: 3px;
+        text-decoration: none;
+        transition-property: color, background-color;
+        transition: 0.3s ease; }
+        .nav .inner .buttonGroup a:hover {
+          background-color: black;
+          color: white; }
+
+.container {
+  margin-top: 60px; }
+  .container .panel {
+    width: 100%;
+    display: flex; }
+    .container .panel.dark {
+      background-color: #ccc; }
+    .container .panel .innerPanel {
+      margin: 0 10px;
+      width: calc(100% - 20px);
+      max-width: 1000px;
+      margin: 0 auto; }
+
+.popup {
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100; }
+  .popup.hidden {
+    display: none; }
+  .popup .box {
+    background-color: white;
+    border-radius: 5px;
+    width: calc(100% - 20px);
+    max-width: 500px;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column; }
+    .popup .box h1,
+    .popup .box p {
+      text-align: center; }
+    .popup .box h2 {
+      text-align: center;
+      margin: 0; }
+    .popup .box .buttonGroup {
+      display: flex;
+      flex-direction: column; }
+      .popup .box .buttonGroup a {
+        background-color: white;
+        border: 1px solid black;
+        color: black;
+        padding: 3px 10px;
+        border-radius: 3px;
+        text-decoration: none;
+        transition-property: color, background-color;
+        transition: 0.3s ease;
+        margin-top: 10px;
+        text-align: center;
+        cursor: pointer; }
+        .popup .box .buttonGroup a:hover {
+          background-color: black;
+          color: white; }
+        .popup .box .buttonGroup a.dark {
+          background-color: black;
+          color: white;
+          padding: 15px; }
+          .popup .box .buttonGroup a.dark:hover {
+            text-decoration: underline; }
+
+.collections .collection {
+  background-color: white;
+  margin: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
+  max-height: 80px;
+  transition: max-height 0.5s ease; }
+  .collections .collection:hover {
+    max-height: 310px; }
+  .collections .collection.expanded {
+    max-height: initial; }
+  .collections .collection .main {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start; }
+    .collections .collection .main .text {
+      height: calc(100% - 15px);
+      width: calc(100% - 100px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 5px 10px 10px; }
+      .collections .collection .main .text .title {
+        margin: 0;
+        font-size: 1.7em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        max-width: 100%; }
+      .collections .collection .main .text a.title {
+        color: black !important;
+        text-decoration: none; }
+        .collections .collection .main .text a.title:hover {
+          text-decoration: underline; }
+      .collections .collection .main .text .date {
+        color: grey;
+        margin: 0; }
+      .collections .collection .main .text div {
+        display: flex;
+        flex-direction: row; }
+        .collections .collection .main .text div a {
+          text-decoration: none;
+          cursor: pointer;
+          font-size: 0.8em;
+          padding: 3px 10px;
+          border-radius: 3px;
+          border: 1px solid black;
+          display: block;
+          width: max-content; }
+          .collections .collection .main .text div a:hover {
+            text-decoration: underline; }
+          .collections .collection .main .text div a.random {
+            background-color: black;
+            color: white;
+            margin-right: 5px; }
+          .collections .collection .main .text div a.edit {
+            background-color: white;
+            color: black; }
+    .collections .collection .main img {
+      height: 80px;
+      width: 80px; }
+  .collections .collection .songs {
+    width: 100%; }
+    .collections .collection .songs a {
+      color: black;
+      text-decoration: none;
+      display: block;
+      width: calc(100% - 20px);
+      padding: 8px 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease; }
+      .collections .collection .songs a.all {
+        text-align: center; }
+      .collections .collection .songs a:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+        text-decoration: underline; }
+  .collections .collection .tinyHeader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; }
+    .collections .collection .tinyHeader p {
+      font-size: 1.1em;
+      margin: 0; }
+    .collections .collection .tinyHeader a {
+      background-color: white;
+      border: 1px solid black;
+      color: black;
+      padding: 3px 10px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition-property: color, background-color;
+      transition: 0.3s ease; }
+      .collections .collection .tinyHeader a.random {
+        background-color: black;
+        color: white;
+        margin-right: 5px; }
+        .collections .collection .tinyHeader a.random:hover {
+          text-decoration: underline; }
+      .collections .collection .tinyHeader a:hover {
+        background-color: black;
+        color: white; }
+
+.members {
+  width: 100%;
+  padding: 5px 0; }
+  .members .member {
+    margin: 10px;
+    padding: 5px 10px;
+    display: inline-block;
+    background-color: white;
+    border-left: 5px solid black;
+    color: black; }
+  .members.dark {
+    text-align: center; }
+    .members.dark .member {
+      background-color: #eee; }
+  .members.compact {
+    padding: 0; }
+    .members.compact .member {
+      margin: 0px;
+      background-color: #eee; }
+
+.songInfo {
+  margin: 10px 0; }
+  .songInfo .title {
+    font-size: 1.5em;
+    margin: 2px 0; }
+  .songInfo .collection {
+    font-size: 1.2em;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    margin: 2px 0; }
+    .songInfo .collection:hover {
+      text-decoration: underline; }
+
+.stickybox {
+  position: -webkit-sticky;
+  position: sticky;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  top: 60px;
+  background-color: white;
+  overflow: hidden; }
+  .stickybox input {
+    padding: 10px;
+    font-size: 1.1em;
+    width: calc(100% - 190px);
+    max-width: 350px;
+    border: 1px solid black;
+    border-radius: 3px; }
+  .stickybox .percentage {
+    font-size: 2em;
+    font-variant-numeric: tabular-nums; }
+
+.play {
+  margin-bottom: 30px; }
+  .play .lyricContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between; }
+    .play .lyricContainer .lyricColumn {
+      width: calc(20% - 0.8px); }
+      .play .lyricContainer .lyricColumn .lyricBox {
+        width: 100%;
+        height: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1px 0; }
+        .play .lyricContainer .lyricColumn .lyricBox.covered {
+          background-color: grey; }
+
+.error {
+  background-color: white;
+  margin: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden; }
+  .error div {
+    background-color: black;
+    width: 10px;
+    height: 50px;
+    margin-right: 20px; }
+
+form {
+  background-color: white;
+  margin: 20px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 20px 10px; }
+  form div {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; }
+    form div label {
+      display: block; }
+    form div span {
+      display: flex;
+      flex-direction: row; }
+      form div span label {
+        display: block;
+        padding-left: 5px; }
+    form div input[type=text],
+    form div input[type=password],
+    form div select,
+    form div textarea {
+      margin: 15px 5px;
+      padding: 10px;
+      font-size: 1em;
+      width: calc(100% - 10px);
+      max-width: 400px;
+      box-sizing: border-box;
+      border: 1px solid black;
+      border-radius: 3px; }
+    form div a,
+    form div input[type=submit],
+    form div .fakeUpload {
+      font-size: 16px;
+      background-color: white;
+      border: 1px solid black;
+      color: black;
+      padding: 3px 15px;
+      border-radius: 3px;
+      text-decoration: none;
+      transition-property: color, background-color;
+      transition: 0.3s ease;
+      margin-left: 5px;
+      text-align: center;
+      cursor: pointer; }
+      form div a:hover,
+      form div input[type=submit]:hover,
+      form div .fakeUpload:hover {
+        background-color: black;
+        border-color: black;
+        color: white; }
+    form div input[type=file] {
+      display: none; }
+
+/*# sourceMappingURL=style.scss.css.map */

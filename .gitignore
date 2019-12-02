@@ -121,9 +121,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-*.css
-*.map
 
 # uh me stuff I guess
-static/images
-static/thumbnails
+app/static/images
+app/static/thumbnails
