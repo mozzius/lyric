@@ -23,6 +23,8 @@ app = Flask(__name__)
 socketio = SocketIO(app)
 login = LoginManager(app)
 
+app.secret_key = os.environ.get("SECRET_KEY", "localhost")
+
 IMAGE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "images")
 THUMBNAIL_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "static", "thumbnails"
@@ -426,7 +428,6 @@ def reorder():
 
 
 if __name__ == "__main__":
-    app.secret_key = "localhost"
     app.wsgi_app = SassMiddleware(
         app.wsgi_app, {"main": ("static/sass", "static/css", "/static/css")}
     )
