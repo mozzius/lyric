@@ -1,4 +1,5 @@
 from bson import ObjectId, json_util
+import os
 import pymongo
 import re
 import hashlib
@@ -10,7 +11,7 @@ try:
 except ImportError:
     from app.main import current_user
 
-client = pymongo.MongoClient()
+client = pymongo.MongoClient(os.environ.get('MONGO_URL', None))
 
 db = client.lyric
 songs = db.songs
