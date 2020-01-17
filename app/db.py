@@ -11,7 +11,7 @@ try:
 except ImportError:
     from app.main import current_user
 
-client = pymongo.MongoClient(os.environ.get('MONGO_URL', None))
+client = pymongo.MongoClient(os.environ.get('MONGODB_URI', None))
 
 db = client.lyric
 songs = db.songs
