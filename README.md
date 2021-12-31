@@ -1,7 +1,8 @@
 # lyric
 ## Test your lyrical knowledge
 
-> https://lyric.cool
+> https://lyric.games
+> Note: Currently not working, due to Heroku deprecating the database add-on I was using
 
 ### Tech
 
@@ -10,7 +11,7 @@
  - Mongodb
  - Socket.io
  - SASS
- - jQuery (I know)
+ - jQuery
 
 ### Running this project
 
